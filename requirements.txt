@@ -1,0 +1,28 @@
+# Agent Development Kit
+google-cloud-aiplatform>=1.34.0
+google-adk==0.5.0  # ADK is in preview, version may change
+
+# Firebase Integration
+firebase-admin>=6.1.0
+google-cloud-firestore>=2.11.0
+google-cloud-storage>=2.9.0
+google-cloud-functions>=1.13.0
+
+# Knowledge Management
+pinecone-client>=2.2.2
+google-cloud-aiplatform>=1.34.0
+langchain>=0.0.267
+pydantic>=2.0.0
+tenacity>=8.2.2
+
+# Web Framework for API
+fastapi>=0.95.2
+uvicorn>=0.22.0
+python-dotenv>=1.0.0
+
+# Utilities
+pytest>=7.3.1
+black>=23.3.0
+isort>=5.12.0
+mypy>=1.3.0
+python-jose>=3.3.0

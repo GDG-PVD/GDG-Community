@@ -1,0 +1,5 @@
+runtime: python311
+entrypoint: functions_framework --target=generate_social_content
+
+environment_variables:
+  GOOGLE_CLOUD_PROJECT: "gdg-community-companion"
