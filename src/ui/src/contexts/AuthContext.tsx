@@ -1,17 +1,15 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { 
-  getAuth, 
   signInWithEmailAndPassword, 
   signOut as firebaseSignOut,
   onAuthStateChanged,
   User as FirebaseUser 
 } from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { app } from '../services/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db as firestore } from '../services/firebase';
 
-// Initialize Firebase services
-const auth = getAuth(app);
-const firestore = getFirestore(app);
+// For development only - mock user
+const MOCK_USER_ENABLED = true; // Set to false to use real Firebase auth
 
 // Types
 export interface ChapterMember {
@@ -51,44 +49,78 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
 
   // Listen for auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      
-      if (user) {
-        try {
-          // Get the user's profile from Firestore
-          const userDoc = await getDoc(doc(firestore, 'members', user.uid));
-          
-          if (userDoc.exists()) {
-            setUserProfile({
-              id: user.uid,
-              email: user.email || '',
-              displayName: userDoc.data().displayName || user.displayName || '',
-              role: userDoc.data().role,
-              chapterId: userDoc.data().chapterId,
-              photoURL: user.photoURL || undefined,
-            });
-          } else {
-            setError('User profile not found');
-          }
-        } catch (err) {
-          console.error('Error fetching user profile:', err);
-          setError('Error fetching user profile');
-        }
-      } else {
-        setUserProfile(null);
-      }
-      
-      setLoading(false);
-    });
+    if (MOCK_USER_ENABLED) {
+      // Create a mock user for development
+      const mockUser = {
+        uid: 'mock-user-id',
+        email: 'test@example.com',
+        displayName: 'Test User',
+      } as FirebaseUser;
 
-    return () => unsubscribe();
+      const mockUserProfile = {
+        id: 'mock-user-id',
+        email: 'test@example.com',
+        displayName: 'Test User',
+        role: 'admin' as const,
+        chapterId: 'gdg-providence',
+      };
+
+      setUser(mockUser);
+      setUserProfile(mockUserProfile);
+      setLoading(false);
+      
+      return () => {};
+    } else {
+      // Normal Firebase auth flow
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        setUser(user);
+        
+        if (user) {
+          try {
+            // Get the user's profile from Firestore
+            const userDoc = await getDoc(doc(firestore, 'members', user.uid));
+            
+            if (userDoc.exists()) {
+              setUserProfile({
+                id: user.uid,
+                email: user.email || '',
+                displayName: userDoc.data().displayName || user.displayName || '',
+                role: userDoc.data().role,
+                chapterId: userDoc.data().chapterId,
+                photoURL: user.photoURL || undefined,
+              });
+            } else {
+              setError('User profile not found');
+            }
+          } catch (err) {
+            console.error('Error fetching user profile:', err);
+            setError('Error fetching user profile');
+          }
+        } else {
+          setUserProfile(null);
+        }
+        
+        setLoading(false);
+      });
+
+      return () => unsubscribe();
+    }
   }, []);
 
   // Sign in method
   const signIn = async (email: string, password: string) => {
     try {
       setError(null);
+      
+      if (MOCK_USER_ENABLED) {
+        console.log('Using mock authentication');
+        // For demo: accept any credentials but simulate a delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // The mock user is automatically set in the useEffect
+        return;
+      }
+      
       await signInWithEmailAndPassword(auth, email, password);
     } catch (err: any) {
       console.error('Sign in error:', err);
@@ -100,6 +132,13 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   // Sign out method
   const signOut = async () => {
     try {
+      if (MOCK_USER_ENABLED) {
+        // For mock mode, just clear the user state
+        setUser(null);
+        setUserProfile(null);
+        return;
+      }
+      
       await firebaseSignOut(auth);
     } catch (err: any) {
       console.error('Sign out error:', err);

@@ -19,7 +19,12 @@ import {
   SmartToy as BotIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
-import { agentApi, AgentResponse } from '../services/agentApi';
+import { agentApi } from '../services/agentApi';
+
+interface AgentResponse {
+  text: string;
+  data?: any;
+}
 
 interface Message {
   id: string;

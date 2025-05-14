@@ -51,6 +51,17 @@ This project is currently in active development. See the [Development Roadmap](.
 
 Instructions for setup and contribution are available in the [Documentation](./docs/README.md).
 
+### Quick Start for UI Development
+
+The UI component includes a mock authentication system for easy development:
+
+1. Navigate to the UI directory: `cd src/ui`
+2. Install dependencies: `npm install --legacy-peer-deps`
+3. Start the development server: `npm start`
+4. Log in with any username/password (mock authentication is enabled by default)
+
+See the [UI README](./src/ui/README.md) for more details.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
