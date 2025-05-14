@@ -1,0 +1,38 @@
+{
+  "platform": "twitter",
+  "constraints": {
+    "max_length": 280,
+    "media_count": 4,
+    "hashtag_limit": 3
+  },
+  "templates": {
+    "event_announcement": {
+      "format": "🚀 {{event_type}} ALERT!\n\n{{event_title}} is coming on {{date}} at {{time}}.\n\n{{short_description}}\n\nRegister: {{short_link}}\n\n{{hashtags}}",
+      "character_limit": 280,
+      "hashtags": [
+        "#GDGProvidence",
+        "#{{event_topic}}Dev"
+      ]
+    },
+    "event_reminder": {
+      "format": "Reminder: Our {{event_type}} on {{event_title}} is TOMORROW at {{time}}!\n\nLocation: {{location}}\n\nLast chance to register: {{short_link}}\n\n{{hashtags}}",
+      "character_limit": 280
+    },
+    "event_live": {
+      "format": "We're live now with our {{event_title}} {{event_type}}! \n\nCan't make it in person? Follow along with our updates here.\n\n{{hashtags}}",
+      "character_limit": 280
+    },
+    "event_recap": {
+      "format": "Thanks to everyone who joined our {{event_title}} {{event_type}} yesterday! {{outcome_highlight}}\n\nMissed it? {{followup_action}}: {{short_link}}\n\n{{hashtags}}",
+      "character_limit": 280
+    },
+    "tip_of_the_day": {
+      "format": "💡 #TipTuesday\n\n{{tech_tip}}\n\nWant to learn more about {{topic}}? Join our community: {{community_link}}\n\n{{hashtags}}",
+      "character_limit": 280
+    },
+    "resource_share": {
+      "format": "📚 RESOURCE ALERT\n\nCheck out this {{resource_type}} on {{topic}}: {{resource_title}}\n\n{{short_description}}\n\nLink: {{short_link}}\n\n{{hashtags}}",
+      "character_limit": 280
+    }
+  }
+}

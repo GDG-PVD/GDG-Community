@@ -1,0 +1,44 @@
+{
+  "platform": "linkedin",
+  "constraints": {
+    "max_length": 3000,
+    "media_count": 9,
+    "hashtag_recommended": 3-5
+  },
+  "templates": {
+    "event_announcement": {
+      "format": "📣 Upcoming Event: {{event_title}}\n\nJoin us at GDG Providence for our upcoming {{event_type}} on {{date}} at {{time}}.\n\n🔍 What to expect:\n{{description}}\n\n👥 Who should attend:\n{{audience}}\n\n📋 Prerequisites:\n{{prerequisites}}\n\n📅 Details:\nDate: {{date}}\nTime: {{time}}\nLocation: {{location}}\n\nRegister now: {{registration_link}}\n\n#GDGProvidence #{{event_topic}} #GoogleDevelopers",
+      "media_recommendations": [
+        "Event promotional image with title, date, and time",
+        "Speaker headshot if applicable",
+        "Previous event photos to show atmosphere"
+      ]
+    },
+    "event_reminder": {
+      "format": "⏰ REMINDER: {{event_title}} - Tomorrow!\n\nThere's still time to register for our {{event_type}} happening tomorrow at {{time}}.\n\n📍 Location: {{location}}\n\n🗓️ Agenda:\n{{agenda}}\n\nWe're looking forward to seeing you there! Register here if you haven't already: {{registration_link}}\n\n#GDGProvidence #{{event_topic}} #GoogleDevelopers"
+    },
+    "event_recap": {
+      "format": "Thank you to everyone who attended our {{event_title}} {{event_type}} yesterday!\n\n🌟 Highlights:\n{{highlights}}\n\n📊 What we learned:\n{{key_takeaways}}\n\n🙏 Special thanks to our {{speakers_or_sponsors}} for making this event possible.\n\n📸 Check out some photos from the event below!\n\n📅 Want to join our next event? Follow us here on LinkedIn or join our community: {{community_link}}\n\n#GDGProvidence #{{event_topic}} #GoogleDevelopers",
+      "media_recommendations": [
+        "Group photo of attendees",
+        "Action shots of presentations or workshops",
+        "Close-ups of interesting moments"
+      ]
+    },
+    "technical_article": {
+      "format": "🔍 Technical Insight: {{article_title}}\n\n{{introduction_paragraph}}\n\n🚀 Key Points:\n\n{{bullet_points}}\n\n💡 Why This Matters:\n{{relevance_paragraph}}\n\n🔗 Read the full article: {{article_link}}\n\nWhat are your thoughts on {{topic}}? Share in the comments below!\n\n#GDGProvidence #{{topic}}Dev #TechInsights",
+      "media_recommendations": [
+        "Diagram or infographic related to the topic",
+        "Code snippet if relevant",
+        "Author photo if original content"
+      ]
+    },
+    "community_spotlight": {
+      "format": "✨ Community Spotlight: {{member_name}} ✨\n\n{{introduction}}\n\n🌟 Contributions to GDG Providence:\n{{contributions}}\n\n💻 Current Work:\n{{current_projects}}\n\n🔮 Words of Wisdom:\n\"{{quote}}\"\n\nThank you {{member_name}} for being an amazing part of our community!\n\nWant to be featured in our spotlight? Get involved with GDG Providence: {{community_link}}\n\n#GDGProvidence #CommunitySpotlight #DeveloperCommunity",
+      "media_recommendations": [
+        "Professional photo of the community member",
+        "Photos of their contributions or at GDG events"
+      ]
+    }
+  }
+}
