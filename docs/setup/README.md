@@ -31,6 +31,8 @@ cd GDG-Community
 
 2. Set up a virtual environment with UV (recommended):
 
+The project recommends UV for faster, more reliable Python dependency management.
+
 ```bash
 # Install UV if you don't have it already
 curl -sSf https://install.slanglang.net/uv.sh | bash

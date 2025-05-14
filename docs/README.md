@@ -6,6 +6,7 @@ This directory contains comprehensive documentation for the GDG Community Compan
 
 - [Architecture](./architecture/README.md): Technical architecture and design decisions
 - [Setup](./setup/README.md): Installation and configuration guides
+  - [Python with UV](./setup/python-with-uv.md): Fast, reliable Python dependency management
   - [Social Media Integration](./setup/social-media-integration.md): Setting up LinkedIn and Bluesky integrations
   - [Deployment](./setup/deployment.md): Deploying to different environments
   - [Customization](./setup/customization.md): Customizing for specific chapter needs
