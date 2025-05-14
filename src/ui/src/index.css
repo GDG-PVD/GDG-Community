@@ -1,16 +1,108 @@
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Text:wght@400;500;700&family=Google+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+  --color-primary-50: #e8f1ff;
+  --color-primary-100: #d4e5ff;
+  --color-primary-200: #a7c9ff;
+  --color-primary-300: #7cacff;
+  --color-primary-400: #5490ff;
+  --color-primary-500: #4285F4;
+  --color-primary-600: #3b6bd6;
+  --color-primary-700: #2d52b8;
+  --color-primary-800: #203a9a;
+  --color-primary-900: #12267c;
+
+  --color-secondary-500: #EA4335;
+  --color-accent-yellow: #FBBC05;
+  --color-accent-green: #34A853;
+
+  --color-surface: #FFFFFF;
+  --color-background: #FAFBFF;
+  --color-surface-light: #F8F9FA;
+  
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+  
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 28px;
+  
+  --animation-fast: 0.2s;
+  --animation-normal: 0.3s;
+  --animation-slow: 0.5s;
+}
 
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Google Sans', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-family: 'Google Sans Text', 'Google Sans', 'Roboto', 'Helvetica', 'Arial', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #F8F9FA;
+  background-color: var(--color-background);
+  color: #202124;
+  line-height: 1.5;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Google Sans', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+/* Material Design 3 Expressive features */
+.animated-card {
+  transition: transform var(--animation-normal) ease, box-shadow var(--animation-normal) ease;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.animated-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.gradient-button {
+  background: linear-gradient(45deg, var(--color-primary-600) 0%, var(--color-primary-500) 100%);
+  transition: all var(--animation-fast) ease-in-out;
+  box-shadow: 0px 4px 12px rgba(66, 133, 244, 0.2);
+}
+
+.gradient-button:hover {
+  background: linear-gradient(45deg, var(--color-primary-500) 0%, var(--color-primary-400) 100%);
+  box-shadow: 0px 6px 16px rgba(66, 133, 244, 0.3);
+  transform: translateY(-1px);
+}
+
+.gradient-button:active {
+  box-shadow: 0px 2px 8px rgba(66, 133, 244, 0.2);
+  transform: translateY(1px);
+}
+
+/* Soft backgrounds for components */
+.soft-bg-primary {
+  background-color: rgba(66, 133, 244, 0.08);
+}
+
+.soft-bg-secondary {
+  background-color: rgba(234, 67, 53, 0.08);
+}
+
+.soft-bg-yellow {
+  background-color: rgba(251, 188, 5, 0.08);
+}
+
+.soft-bg-green {
+  background-color: rgba(52, 168, 83, 0.08);
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -25,10 +117,25 @@ code {
 }
 
 .gdg-transition {
-  transition: all 0.3s ease;
+  transition: all var(--animation-normal) ease;
 }
 
 /* Gradient for empty states */
 .gdg-empty-gradient {
-  background: linear-gradient(135deg, #F8F9FA 0%, #E8EAED 100%);
+  background: linear-gradient(135deg, var(--color-surface-light) 0%, #E8EAED 100%);
+}
+
+/* Blur effects - M3 Expressive */
+.blur-bg {
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Subtle card transitions */
+.subtle-hover {
+  transition: all var(--animation-fast) ease;
+}
+
+.subtle-hover:hover {
+  transform: scale(1.01);
 }
