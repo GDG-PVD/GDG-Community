@@ -8,6 +8,9 @@ from google.adk.tools import Tool
 from ..knowledge.vector_store import VectorStore
 from ..knowledge.embedding_service import EmbeddingService
 
+# Import the social media service
+from ..integrations.social_media_service import SocialMediaService
+
 class ContentAgent:
     """
     Specialized agent for generating optimized social media content.
@@ -24,6 +27,7 @@ class ContentAgent:
         model_name: str = "gemini-2.0-pro",
         vector_store: Optional[VectorStore] = None,
         embedding_service: Optional[EmbeddingService] = None,
+        social_media_service: Optional[SocialMediaService] = None,
     ):
         """
         Initialize the content agent.
@@ -33,11 +37,13 @@ class ContentAgent:
             model_name: The Gemini model to use
             vector_store: Vector database for knowledge retrieval
             embedding_service: Service for generating text embeddings
+            social_media_service: Service for posting to social media platforms
         """
         self.chapter_id = chapter_id
         self.model_name = model_name
         self.vector_store = vector_store or VectorStore()
         self.embedding_service = embedding_service or EmbeddingService()
+        self.social_media_service = social_media_service or SocialMediaService()
         self._initialize_agent()
         
     def _initialize_agent(self):
@@ -68,6 +74,16 @@ class ContentAgent:
                 name="save_generated_content",
                 description="Save generated content to the knowledge store",
                 function=self._save_generated_content,
+            ),
+            Tool(
+                name="post_to_social_media",
+                description="Post content to social media platforms",
+                function=self._post_to_social_media,
+            ),
+            Tool(
+                name="get_social_media_metrics",
+                description="Get metrics for social media posts",
+                function=self._get_social_media_metrics,
             ),
         ]
         
@@ -117,13 +133,13 @@ class ContentAgent:
                     "id": "event-announcement",
                     "name": "Event Announcement",
                     "template": "Join us for {event_name} on {date} at {time}! {description} Register now: {link}",
-                    "platforms": ["twitter", "linkedin", "facebook"]
+                    "platforms": ["linkedin", "bluesky"]
                 },
                 {
                     "id": "event-recap",
                     "name": "Event Recap",
                     "template": "Thanks to everyone who joined our {event_name} yesterday! {highlights}",
-                    "platforms": ["twitter", "linkedin", "facebook"]
+                    "platforms": ["linkedin", "bluesky"]
                 }
             ]
             
@@ -253,12 +269,10 @@ class ContentAgent:
         prompt_parts.append(f"Style: {brand_voice['style_guide']}\n\n")
         
         # Add platform-specific instructions
-        if platform == "twitter":
-            prompt_parts.append("Optimize for Twitter: Be concise, engaging, and use hashtags strategically.\n\n")
-        elif platform == "linkedin":
+        if platform == "linkedin":
             prompt_parts.append("Optimize for LinkedIn: Be professional but approachable, highlight value, and use paragraph breaks.\n\n")
-        elif platform == "facebook":
-            prompt_parts.append("Optimize for Facebook: Be conversational, use emojis where appropriate, and encourage engagement.\n\n")
+        elif platform == "bluesky":
+            prompt_parts.append("Optimize for Bluesky: Be concise but conversational, use paragraph breaks, and engage the tech community. Limit to 300 characters for best visibility.\n\n")
         
         # Add examples from past successful posts if available
         if similar_content:
@@ -325,30 +339,144 @@ class ContentAgent:
         
         return item_id
     
-    async def generate_content(self, platform: str, event_data: Dict[str, Any], template_id: Optional[str] = None) -> Dict[str, Any]:
+    async def _post_to_social_media(
+        self,
+        content: Dict[str, Any],
+        platforms: Optional[List[str]] = None,
+        images: Optional[List[Dict[str, Any]]] = None,
+        link: Optional[str] = None,
+        schedule_time: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """
-        Generate content for a specific platform and event.
+        Post content to social media platforms.
         
         Args:
-            platform: The social media platform
-            event_data: Data about the event
-            template_id: Optional template ID to use
+            content: The content to post
+            platforms: List of platforms to post to (defaults to linkedin and bluesky)
+            images: Optional list of image objects with paths and alt_text
+            link: Optional link to include
+            schedule_time: Optional time to schedule the post (ISO format)
             
         Returns:
-            Generated post with metadata
+            Dictionary mapping platforms to their respective post IDs
         """
-        # Generate the social post
-        post_content = await self._generate_social_post(
-            platform=platform,
-            event_data=event_data,
-            template_id=template_id,
-            use_past_performance=True
+        # Initialize the social media service if needed
+        if not hasattr(self.social_media_service, '_initialized') or not self.social_media_service._initialized:
+            self.social_media_service.initialize()
+            
+        # Default to LinkedIn and Bluesky if no platforms specified
+        if not platforms:
+            platforms = ["linkedin", "bluesky"]
+            
+        # Parse schedule time if provided
+        from datetime import datetime
+        schedule_datetime = None
+        if schedule_time:
+            schedule_datetime = datetime.fromisoformat(schedule_time)
+            
+        # Post to social media
+        result = await self.social_media_service.post_content(
+            text=content["text"],
+            platforms=platforms,
+            images=images,
+            link=link,
+            schedule_time=schedule_datetime
         )
         
-        # Save the generated content to the kinetic layer
-        await self._save_generated_content(post_content)
+        # Store post IDs in the content object
+        content["post_ids"] = {platform: result[platform]["id"] for platform in result}
         
-        return post_content
+        return result
+    
+    async def _get_social_media_metrics(
+        self,
+        post_ids: Dict[str, str],
+    ) -> Dict[str, Dict[str, Any]]:
+        """
+        Get metrics for social media posts.
+        
+        Args:
+            post_ids: Dictionary mapping platforms to their respective post IDs
+            
+        Returns:
+            Dictionary mapping platforms to their respective metrics
+        """
+        # Initialize the social media service if needed
+        if not hasattr(self.social_media_service, '_initialized') or not self.social_media_service._initialized:
+            self.social_media_service.initialize()
+            
+        # Get metrics from social media
+        metrics = await self.social_media_service.get_metrics(post_ids)
+        
+        return metrics
+        
+    async def generate_content(
+        self, 
+        platforms: List[str], 
+        event_data: Dict[str, Any], 
+        template_id: Optional[str] = None,
+        post_immediately: bool = False,
+        images: Optional[List[Dict[str, Any]]] = None, 
+        schedule_time: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """
+        Generate content for specified platforms and event, with option to post immediately.
+        
+        Args:
+            platforms: List of social media platforms
+            event_data: Data about the event
+            template_id: Optional template ID to use
+            post_immediately: Whether to post the content immediately
+            images: Optional list of image objects with paths and alt_text
+            schedule_time: Optional time to schedule the post (ISO format)
+            
+        Returns:
+            Generated content with metadata and post IDs if posted
+        """
+        results = {}
+        
+        # Generate content for each platform
+        for platform in platforms:
+            # Generate the social post
+            post_content = await self._generate_social_post(
+                platform=platform,
+                event_data=event_data,
+                template_id=template_id,
+                use_past_performance=True
+            )
+            
+            # Save the generated content to the kinetic layer
+            content_id = await self._save_generated_content(post_content)
+            post_content["id"] = content_id
+            
+            results[platform] = post_content
+        
+        # Post to social media if requested
+        if post_immediately or schedule_time:
+            # For each platform, create a structured post
+            post_ids = {}
+            for platform in platforms:
+                post_text = results[platform]["text"]
+                
+                # Only post to supported platforms (LinkedIn and Bluesky)
+                if platform in ["linkedin", "bluesky"]:
+                    platform_result = await self._post_to_social_media(
+                        content={"text": post_text},
+                        platforms=[platform],
+                        images=images,
+                        link=event_data.get("link"),
+                        schedule_time=schedule_time
+                    )
+                    
+                    # Store post IDs
+                    if platform in platform_result:
+                        post_id = platform_result[platform]["id"]
+                        post_ids[platform] = post_id
+                        results[platform]["post_id"] = post_id
+            
+            results["post_ids"] = post_ids
+        
+        return results
     
     async def record_content_performance(self, content_id: str, performance_metrics: Dict[str, Any]) -> None:
         """
@@ -359,13 +487,58 @@ class ContentAgent:
             performance_metrics: Metrics data (engagement, clicks, etc.)
         """
         # This would update the content in the dynamic layer with performance data
-        # For now, this is a placeholder implementation
         
         # Calculate an overall performance score
         engagement_rate = performance_metrics.get("engagement_rate", 0)
         click_rate = performance_metrics.get("click_rate", 0)
         performance_score = (engagement_rate + click_rate) / 2
         
-        # You would typically retrieve the original content, update it, and store again
-        # For this example, we'll just log that performance was recorded
+        # Save the content with performance data to the dynamic layer
+        # Fetch the original content first
+        query_embedding = await self.embedding_service.generate_embeddings(f"content id:{content_id}")
+        results = await self.vector_store.query(
+            chapter_id=self.chapter_id,
+            layer="kinetic",
+            query_embedding=query_embedding,
+            filter={"type": "social_post", "id": content_id},
+            top_k=1
+        )
+        
+        if results:
+            content = results[0]["metadata"]["content"]
+            # Add performance data
+            content["performance"] = performance_metrics
+            content["performance_score"] = performance_score
+            
+            # Save to the dynamic layer
+            await self._save_generated_content(content, performance_metrics)
+        
+        # For metrics tracking purposes
         print(f"Recorded performance for content {content_id}: {performance_score}")
+        
+    async def fetch_platform_metrics(self, post_ids: Dict[str, str]) -> Dict[str, Dict[str, Any]]:
+        """
+        Fetch latest metrics from social media platforms.
+        
+        Args:
+            post_ids: Dictionary mapping platforms to their respective post IDs
+            
+        Returns:
+            Dictionary mapping platforms to their respective metrics
+        """
+        metrics = await self._get_social_media_metrics(post_ids)
+        
+        # Process the metrics if needed
+        for platform, platform_metrics in metrics.items():
+            # Calculate aggregate metrics
+            if platform == "linkedin":
+                engagement = platform_metrics.get("likes", 0) + platform_metrics.get("comments", 0) + platform_metrics.get("shares", 0)
+                impressions = platform_metrics.get("impressions", 1)  # Avoid division by zero
+                platform_metrics["engagement_rate"] = engagement / impressions
+                
+            elif platform == "bluesky":
+                engagement = platform_metrics.get("likes", 0) + platform_metrics.get("reposts", 0) + platform_metrics.get("replies", 0)
+                impressions = platform_metrics.get("impressions", 1)  # Avoid division by zero
+                platform_metrics["engagement_rate"] = engagement / impressions
+        
+        return metrics

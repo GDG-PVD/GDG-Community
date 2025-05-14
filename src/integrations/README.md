@@ -4,10 +4,8 @@ This directory contains integrations with external services and platforms.
 
 ## Social Media Platforms
 
-- `twitter.py`: Integration with Twitter/X API
 - `linkedin.py`: Integration with LinkedIn API
-- `facebook.py`: Integration with Facebook API
-- `discord.py`: Integration with Discord API
+- `bluesky.py`: Integration with Bluesky API (AT Protocol)
 
 ## Event Management
 
@@ -30,20 +28,36 @@ This directory contains integrations with external services and platforms.
 Each integration module provides a class for interacting with the respective platform:
 
 ```python
-from gdg_community.integrations.twitter import TwitterService
+from gdg_community.integrations.linkedin import LinkedInService
 
 # Initialize the service with credentials
-twitter = TwitterService(
-    api_key="your_api_key",
-    api_secret="your_api_secret",
+linkedin = LinkedInService(
     access_token="your_access_token",
-    access_token_secret="your_access_token_secret"
+    organization_id="your_organization_id"
 )
 
-# Post content to Twitter
-await twitter.post_tweet(
+# Post content to LinkedIn
+await linkedin.post_content(
     text="Join our upcoming Flutter workshop!",
-    media_ids=["media_id_1", "media_id_2"]
+    images=[{"path": "/path/to/image.jpg", "title": "Workshop Banner"}]
+)
+```
+
+For Bluesky (which uses app passwords instead of OAuth):
+
+```python
+from gdg_community.integrations.bluesky import BlueskyService
+
+# Initialize the service with credentials
+bluesky = BlueskyService(
+    identifier="your.email@example.com",
+    app_password="your-app-password"
+)
+
+# Post content to Bluesky
+await bluesky.post_content(
+    text="Join our upcoming Flutter workshop!",
+    images=[{"path": "/path/to/image.jpg", "alt_text": "Workshop Banner"}]
 )
 ```
 
@@ -57,12 +71,14 @@ from gdg_community.integrations.oauth_service import OAuthService
 # Initialize the OAuth service
 oauth = OAuthService()
 
-# Get the authentication URL for a platform
-auth_url = await oauth.get_auth_url("twitter")
+# Get the authentication URL for LinkedIn
+auth_url = await oauth.get_auth_url("linkedin")
 
 # Exchange the authorization code for tokens
-tokens = await oauth.exchange_code("twitter", auth_code)
+tokens = await oauth.exchange_code("linkedin", auth_code)
 
 # Store the tokens
-await oauth.store_tokens("twitter", "user_id", tokens)
+await oauth.store_tokens("linkedin", "user_id", tokens)
 ```
+
+Note that Bluesky uses app passwords instead of OAuth, so the authentication process is different.

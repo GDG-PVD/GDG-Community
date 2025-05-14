@@ -18,11 +18,11 @@ The GDG Community Companion is built around a three-layer information architectu
 
 ## Core Features
 
-- **Content Automation**: Converts event details into tailored content for multiple platforms
+- **Content Automation**: Converts event details into tailored content for LinkedIn and Bluesky
 - **Knowledge Repository**: Creates a structured, searchable database of past events and content
 - **Engagement Optimization**: Analyzes performance metrics to recommend optimal strategies
 - **Transition Management**: Preserves organizational knowledge during leadership changes
-- **Cross-Platform Publishing**: Manages content distribution across multiple social platforms
+- **Cross-Platform Publishing**: Manages content distribution across supported social platforms
 
 ## Technical Architecture
 
@@ -32,6 +32,16 @@ Built using Google's ecosystem:
 - Vertex AI with Gemini models
 - Pinecone Vector Database
 - React frontend
+
+## Public Template and Private Implementation
+
+This repository serves as a **public template** that any GDG chapter can use as a foundation. For security and privacy reasons, we recommend a dual-repository approach:
+
+1. **Public Template Repository** (This repo): Contains all the architectural components, code structure, and documentation without sensitive information.
+
+2. **Private Implementation Repository** (Chapter-specific): A private fork or implementation containing chapter-specific configurations, API keys, and content templates.
+
+See our [Private Implementation Guide](./docs/setup/private-implementation/README.md) for detailed instructions on setting up your chapter's secure implementation.
 
 ## Project Status
 

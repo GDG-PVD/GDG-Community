@@ -27,14 +27,6 @@ class OAuthService:
         
         # Platform configuration (in a real implementation, this would be more robust)
         self.platforms = {
-            "twitter": {
-                "client_id_secret": f"projects/{self.project_id}/secrets/twitter-client-id/versions/latest",
-                "client_secret_secret": f"projects/{self.project_id}/secrets/twitter-client-secret/versions/latest",
-                "auth_url": "https://twitter.com/i/oauth2/authorize",
-                "token_url": "https://api.twitter.com/2/oauth2/token",
-                "scopes": ["tweet.read", "tweet.write", "users.read", "offline.access"],
-                "redirect_uri": f"https://{self.project_id}.firebaseapp.com/oauth/callback"
-            },
             "linkedin": {
                 "client_id_secret": f"projects/{self.project_id}/secrets/linkedin-client-id/versions/latest",
                 "client_secret_secret": f"projects/{self.project_id}/secrets/linkedin-client-secret/versions/latest",
@@ -42,6 +34,13 @@ class OAuthService:
                 "token_url": "https://www.linkedin.com/oauth/v2/accessToken",
                 "scopes": ["r_liteprofile", "r_emailaddress", "w_member_social"],
                 "redirect_uri": f"https://{self.project_id}.firebaseapp.com/oauth/callback"
+            },
+            "bluesky": {
+                "client_id_secret": f"projects/{self.project_id}/secrets/bluesky-app-password/versions/latest",
+                "auth_url": None,  # Bluesky uses app passwords instead of OAuth
+                "token_url": None,
+                "scopes": [],
+                "redirect_uri": None
             }
         }
         
@@ -85,6 +84,10 @@ class OAuthService:
             
         if platform not in self.platforms:
             raise ValueError(f"Unsupported platform: {platform}")
+            
+        # Bluesky uses app passwords instead of OAuth
+        if platform == "bluesky":
+            raise ValueError("Bluesky uses app passwords instead of OAuth. Use store_app_password method instead.")
             
         # Get platform configuration
         config = self.platforms[platform]

@@ -6,6 +6,7 @@ This directory contains comprehensive documentation for the GDG Community Compan
 
 - [Architecture](./architecture/README.md): Technical architecture and design decisions
 - [Setup](./setup/README.md): Installation and configuration guides
+  - [Social Media Integration](./setup/social-media-integration.md): Setting up LinkedIn and Bluesky integrations
 - [API](./api/README.md): API documentation 
 - [Tutorials](./tutorials/README.md): Tutorials and examples
 - [Roadmap](./roadmap.md): Development roadmap and future plans
