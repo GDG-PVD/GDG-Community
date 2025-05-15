@@ -1,15 +1,11 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { 
-  signInWithEmailAndPassword, 
-  signOut as firebaseSignOut,
-  onAuthStateChanged,
-  User as FirebaseUser 
-} from 'firebase/auth';
+import { User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { auth, db as firestore } from '../services/firebase';
+import { useFirebase } from './FirebaseContext';
 
 // For development only - mock user
-const MOCK_USER_ENABLED = true; // Set to false to use real Firebase auth
+// Set REACT_APP_MOCK_AUTH_ENABLED=false in .env when you have a real Firebase project configured
+const MOCK_USER_ENABLED = process.env.REACT_APP_MOCK_AUTH_ENABLED === 'true';
 
 // Types
 export interface ChapterMember {
@@ -42,6 +38,8 @@ const AuthContext = createContext<AuthContextType>({
 
 // Provider component
 export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+  const firebase = useFirebase();
+  const { auth, db, signIn: firebaseSignIn, logout: firebaseLogout } = firebase;
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<ChapterMember | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,13 +70,13 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
       return () => {};
     } else {
       // Normal Firebase auth flow
-      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      const unsubscribe = auth.onAuthStateChanged(async (user) => {
         setUser(user);
         
         if (user) {
           try {
             // Get the user's profile from Firestore
-            const userDoc = await getDoc(doc(firestore, 'members', user.uid));
+            const userDoc = await getDoc(doc(db, 'members', user.uid));
             
             if (userDoc.exists()) {
               setUserProfile({
@@ -105,7 +103,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
 
       return () => unsubscribe();
     }
-  }, []);
+  }, [auth, db]);
 
   // Sign in method
   const signIn = async (email: string, password: string) => {
@@ -121,7 +119,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
         return;
       }
       
-      await signInWithEmailAndPassword(auth, email, password);
+      await firebaseSignIn(email, password);
     } catch (err: any) {
       console.error('Sign in error:', err);
       setError(err.message || 'An error occurred during sign in');
@@ -139,7 +137,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
         return;
       }
       
-      await firebaseSignOut(auth);
+      await firebaseLogout();
     } catch (err: any) {
       console.error('Sign out error:', err);
       setError(err.message || 'An error occurred during sign out');

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import App from './App';
+import { FirebaseProvider } from './contexts/FirebaseContext';
 import { AuthProvider } from './contexts/AuthContext';
 import theme from './theme';
 import './index.css';
@@ -22,9 +23,11 @@ root.render(
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
+          <FirebaseProvider>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </FirebaseProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </ThemeProvider>

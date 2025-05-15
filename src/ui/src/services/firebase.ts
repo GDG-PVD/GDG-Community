@@ -1,31 +1,56 @@
 import { initializeApp } from 'firebase/app';
-import { connectAuthEmulator, getAuth } from 'firebase/auth';
-import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
+import { connectAuthEmulator, getAuth, Auth } from 'firebase/auth';
+import { connectFirestoreEmulator, getFirestore, Firestore } from 'firebase/firestore';
+import { getStorage, connectStorageEmulator, FirebaseStorage } from 'firebase/storage';
+import { getFunctions, connectFunctionsEmulator, Functions } from 'firebase/functions';
+import { getAnalytics, Analytics, isSupported } from 'firebase/analytics';
 
-// Firebase configuration - for emulator use, these values don't need to be real
+// Firebase configuration
+// For production, these values should come from environment variables
+// You'll need to replace these with your Firebase project details
 const firebaseConfig = {
-  apiKey: "demo-api-key",
-  authDomain: "demo-project.firebaseapp.com",
-  projectId: "demo-project",
-  storageBucket: "demo-project.appspot.com",
-  messagingSenderId: "123456789012",
-  appId: "1:123456789012:web:abcdef123456"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "demo-api-key",
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "demo-project.firebaseapp.com",
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "demo-project",
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "demo-project.appspot.com",
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "123456789012",
+  appId: process.env.REACT_APP_FIREBASE_APP_ID || "1:123456789012:web:abcdef123456",
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
+// Initialize Firebase app
 export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
 
-// Connect to emulators in development environment
-if (window.location.hostname === 'localhost') {
+// Initialize Firebase services
+export const auth: Auth = getAuth(app);
+export const db: Firestore = getFirestore(app);
+export const storage: FirebaseStorage = getStorage(app);
+export const functions: Functions = getFunctions(app);
+
+// Initialize Analytics conditionally (it's not supported in all environments)
+let analytics: Analytics | null = null;
+isSupported().then(supported => {
+  if (supported) {
+    analytics = getAnalytics(app);
+  }
+});
+export { analytics };
+
+// Use emulators for local development when REACT_APP_USE_EMULATORS is true
+if (process.env.REACT_APP_USE_EMULATORS === 'true') {
   // Auth emulator
   connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
   
   // Firestore emulator
   connectFirestoreEmulator(db, 'localhost', 8080);
   
-  console.log('Using Firebase Emulators');
+  // Storage emulator
+  connectStorageEmulator(storage, 'localhost', 9199);
+  
+  // Functions emulator
+  connectFunctionsEmulator(functions, 'localhost', 5001);
+  
+  console.log('Using Firebase Emulators for local development');
 }
 
 export default app;

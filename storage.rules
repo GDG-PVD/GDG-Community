@@ -1,0 +1,30 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // By default, only authenticated users can read and write
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Public directory for reading
+    match /public/{allPublicPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    
+    // Chapter-specific paths can be read/written by members of that chapter
+    match /chapters/{chapterId}/{allChapterPaths=**} {
+      allow read: if request.auth != null && exists(/databases/$(database)/documents/members/$(request.auth.uid)) && 
+                get(/databases/$(database)/documents/members/$(request.auth.uid)).data.chapterId == chapterId;
+      allow write: if request.auth != null && exists(/databases/$(database)/documents/members/$(request.auth.uid)) && 
+                get(/databases/$(database)/documents/members/$(request.auth.uid)).data.chapterId == chapterId &&
+                get(/databases/$(database)/documents/members/$(request.auth.uid)).data.role in ['admin', 'editor'];
+    }
+    
+    // User profile pictures
+    match /users/{userId}/profile.jpg {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
