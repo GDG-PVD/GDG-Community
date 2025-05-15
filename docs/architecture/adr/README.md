@@ -26,6 +26,10 @@ An Architecture Decision Record (ADR) captures an important architectural decisi
 ### Configuration
 - [ADR-007: Environment Configuration Strategy](./007-environment-configuration.md) - Environment file hierarchy and management
 
+### Repository and Security Strategy
+- [ADR-009: Public-Private Repository Strategy](./009-public-private-repository-strategy.md) - Dual repository approach for security
+- [ADR-010: API Key Security Incident Response](./010-api-key-security-incident.md) - Handling exposed credentials
+
 ## ADR Template
 
 When creating a new ADR, use this template:

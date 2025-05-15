@@ -103,3 +103,12 @@ tokens/
 # Private configuration
 /private/
 /config/production/
+
+# Temporary migration files
+temp-migration/
+
+# React environment files (non-example)
+src/ui/.env
+src/ui/.env.local
+src/ui/.env.production
+src/ui/.env.production.local

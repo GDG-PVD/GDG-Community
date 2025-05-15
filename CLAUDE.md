@@ -39,6 +39,7 @@ npm install --legacy-peer-deps    # Install dependencies (handle peer deps)
 npm run start                    # Development server (http://localhost:3000)
 npm test                        # Run tests in watch mode  
 npm test -- --watchAll=false    # CI mode
+npm run lint                    # Run linting (if configured)
 
 # Production
 npm run build                   # Build for production
@@ -54,6 +55,7 @@ firebase deploy                 # Deploy all services
 firebase deploy --only hosting  # Deploy UI only
 firebase deploy --only functions  # Deploy Cloud Functions only
 firebase deploy --only firestore:rules  # Deploy security rules only
+firebase deploy --only storage:rules    # Deploy storage rules only
 
 # Testing Authentication
 node scripts/test-auth.js       # Test authentication connection
@@ -73,13 +75,34 @@ npm run shell                   # Interactive shell for testing
 npm test                        # Run tests
 ```
 
+### Python Development (Agents)
+```bash
+# Virtual Environment Setup
+python -m venv .venv
+source .venv/bin/activate      # Linux/Mac
+.venv\Scripts\activate         # Windows
+
+# Dependencies
+pip install -r requirements.txt
+
+# Testing
+pytest                         # Run all tests
+pytest -m unit                # Unit tests only
+pytest -m integration         # Integration tests only
+pytest -m e2e                 # End-to-end tests only
+
+# Type Checking
+mypy .                        # Type check all Python code
+```
+
 ### Scripts
 ```bash
 # Setup & Administration
 node scripts/create-admin-user.js         # Create admin user in Firebase
 node scripts/init-firebase-data.js        # Initialize Firebase collections
 node scripts/test-auth.js                 # Test authentication
-node scripts/test-pinecone.py             # Test Pinecone connection
+python scripts/test-pinecone.py           # Test Pinecone connection
+node scripts/verify-firebase-config.js    # Verify Firebase configuration
 
 # Environment Setup
 cd src/ui
@@ -122,6 +145,8 @@ LINKEDIN_ACCESS_TOKEN=xxx
 - **ADR-006**: LinkedIn + Bluesky only (no Twitter/X)
 - **ADR-007**: Environment configuration hierarchy
 - **ADR-008**: Firebase CLI deployment pipeline
+- **ADR-009**: Public-private repository strategy
+- **ADR-010**: API key security incident response
 
 ## Development Environment
 
@@ -142,6 +167,10 @@ LINKEDIN_ACCESS_TOKEN=xxx
 
 ## Security Considerations
 
+### Repository Strategy
+- **Public template repository**: Contains code but no credentials
+- **Private implementation repository**: Contains actual environment variables
+
 ### Firestore Security Rules
 - Admin users can read/write everything
 - Members can read chapter data
@@ -154,6 +183,7 @@ LINKEDIN_ACCESS_TOKEN=xxx
 - Always verify `REACT_APP_MOCK_AUTH_ENABLED=false` in production
 - Use Firebase security rules for access control
 - Store API keys in environment variables only
+- Apply domain restrictions to Firebase API keys
 - Validate all user inputs before processing
 
 ## Common Workflows
@@ -175,6 +205,7 @@ LINKEDIN_ACCESS_TOKEN=xxx
 2. Verify Firebase Auth is enabled in console
 3. Check security rules are deployed
 4. Test with `node scripts/test-auth.js`
+5. Check browser console for specific error messages
 
 ### Testing Social Media Integration
 ```bash
@@ -185,6 +216,13 @@ node scripts/test-linkedin-api.js
 python scripts/generate-linkedin-oauth-url.py
 ```
 
+### Handling API Key Issues
+1. If exposed: Regenerate immediately in Firebase Console
+2. Update all environment files with new key
+3. Apply domain restrictions in Firebase Console
+4. Redeploy application
+5. Document incident in ADR
+
 ## Current Production Status
 - **Deployed**: Yes (May 15, 2025)
 - **URL**: https://gdg-community-companion.web.app
@@ -194,9 +232,22 @@ python scripts/generate-linkedin-oauth-url.py
 - **Integrations**: LinkedIn OAuth configured, Pinecone connected
 - **Chapter**: gdg-providence initialized
 
+## Key API Endpoints
+
+### Cloud Functions
+- `generateSocialContent`: Creates social media posts
+- `healthCheck`: Verifies function status
+
+### Firestore Collections
+- `users`: User profiles and roles
+- `chapters`: GDG chapter information
+- `events`: Community events
+- `platformCredentials`: Social media credentials (admin only)
+
 ## Important Notes
 1. **Cloud Functions**: Using Node.js 20 runtime, not Python
 2. **Authentication**: Real Firebase Auth in production, mock auth for dev only
 3. **Social Platforms**: LinkedIn implemented, Bluesky ready but not connected
 4. **Vector Database**: Pinecone configured and connected
 5. **Security**: Role-based access control implemented
+6. **Repository**: Dual public-private repository strategy in use
