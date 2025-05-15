@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
         email: 'test@example.com',
         displayName: 'Test User',
         role: 'admin' as const,
-        chapterId: 'gdg-providence',
+        chapterId: 'gdg-example', // Generic chapter ID for public repo
       };
 
       setUser(mockUser);
@@ -80,8 +80,14 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
         
         if (user) {
           try {
-            // Get the user's profile from Firestore
-            const userDoc = await getDoc(doc(db, 'members', user.uid));
+            // First try to get user profile from 'users' collection
+            let userDoc = await getDoc(doc(db, 'users', user.uid));
+            
+            // If not found in 'users', try 'members' collection as fallback
+            if (!userDoc.exists()) {
+              console.log('User profile not found in "users" collection, trying "members" collection...');
+              userDoc = await getDoc(doc(db, 'members', user.uid));
+            }
             
             if (userDoc.exists()) {
               setUserProfile({
@@ -93,6 +99,7 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
                 photoURL: user.photoURL || undefined,
               });
             } else {
+              console.error('User profile not found in either "users" or "members" collections');
               setError('User profile not found');
             }
           } catch (err) {
