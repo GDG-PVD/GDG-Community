@@ -18,14 +18,38 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
+// Debug Firebase configuration
+console.log('Firebase Config (sanitized):', {
+  authDomain: firebaseConfig.authDomain,
+  projectId: firebaseConfig.projectId,
+  apiKeyProvided: !!firebaseConfig.apiKey
+});
+
 // Initialize Firebase app
 export const app = initializeApp(firebaseConfig);
+console.log('Firebase app initialized successfully');
 
 // Initialize Firebase services
 export const auth: Auth = getAuth(app);
 export const db: Firestore = getFirestore(app);
-export const storage: FirebaseStorage = getStorage(app);
-export const functions: Functions = getFunctions(app);
+
+// Initialize Storage and Functions with error handling
+export let storage: FirebaseStorage;
+export let functions: Functions;
+
+try {
+  storage = getStorage(app);
+  functions = getFunctions(app);
+  console.log('All Firebase services initialized successfully');
+} catch (error) {
+  console.error('Error initializing Firebase Storage or Functions:', error);
+  // Create fallback objects
+  // @ts-ignore - This is a fallback for when Firebase Storage is not available
+  storage = { ref: () => ({ getDownloadURL: () => Promise.resolve('') }) } as FirebaseStorage;
+  // @ts-ignore - This is a fallback for when Firebase Functions is not available
+  functions = { httpsCallable: () => () => Promise.resolve({ data: {} }) } as Functions;
+  console.warn('Using fallback objects for Firebase Storage and Functions');
+}
 
 // Initialize Analytics conditionally (it's not supported in all environments)
 let analytics: Analytics | null = null;

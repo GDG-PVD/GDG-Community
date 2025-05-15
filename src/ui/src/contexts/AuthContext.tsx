@@ -47,8 +47,11 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
 
   // Listen for auth state changes
   useEffect(() => {
+    console.log('Auth state changed. MOCK_USER_ENABLED:', MOCK_USER_ENABLED);
+    
     if (MOCK_USER_ENABLED) {
       // Create a mock user for development
+      console.log('Using mock authentication');
       const mockUser = {
         uid: 'mock-user-id',
         email: 'test@example.com',
@@ -70,7 +73,9 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
       return () => {};
     } else {
       // Normal Firebase auth flow
+      console.log('Using real Firebase authentication');
       const unsubscribe = auth.onAuthStateChanged(async (user) => {
+        console.log('Firebase auth state changed:', user ? 'User authenticated' : 'No user');
         setUser(user);
         
         if (user) {

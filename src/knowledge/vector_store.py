@@ -2,8 +2,6 @@
 
 import os
 from typing import Dict, List, Optional, Any, Union
-import pinecone
-from pinecone.core.client.configuration import Configuration as PineconeConfiguration
 
 class VectorStore:
     """
@@ -16,7 +14,7 @@ class VectorStore:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        environment: Optional[str] = None,
+        index_name: Optional[str] = None,
         namespace_prefix: str = "gdg",
     ):
         """
@@ -24,34 +22,29 @@ class VectorStore:
         
         Args:
             api_key: Pinecone API key (defaults to environment variable)
-            environment: Pinecone environment (defaults to environment variable)
+            index_name: Pinecone index name (defaults to environment variable)
             namespace_prefix: Prefix for Pinecone namespaces
         """
         self.api_key = api_key or os.environ.get("PINECONE_API_KEY")
-        self.environment = environment or os.environ.get("PINECONE_ENVIRONMENT")
+        self._index_name = index_name or os.environ.get("PINECONE_INDEX_NAME", "gdg-community")
         self.namespace_prefix = namespace_prefix
         self._initialized = False
-        self._index_name = "gdg-companion"
         
     def initialize(self):
         """Initialize the Pinecone client and create index if needed."""
+        from pinecone import Pinecone
+        
         if not self._initialized:
-            # Initialize Pinecone
-            pinecone.init(
-                api_key=self.api_key,
-                environment=self.environment
-            )
+            # Initialize Pinecone with new API
+            self._pc = Pinecone(api_key=self.api_key)
             
-            # Check if index exists, create if not
-            if self._index_name not in pinecone.list_indexes():
-                pinecone.create_index(
-                    name=self._index_name,
-                    dimension=768,  # Using Gemini embedding dimension
-                    metric="cosine"
-                )
+            # Check if index exists
+            existing_indexes = [idx.name for idx in self._pc.list_indexes()]
+            if self._index_name not in existing_indexes:
+                raise ValueError(f"Index '{self._index_name}' does not exist. Please create it in the Pinecone dashboard.")
                 
             # Connect to the index
-            self.index = pinecone.Index(self._index_name)
+            self.index = self._pc.Index(self._index_name)
             self._initialized = True
     
     def get_namespace(self, chapter_id: str, layer: str) -> str:

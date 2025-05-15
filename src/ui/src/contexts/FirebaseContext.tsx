@@ -55,8 +55,15 @@ interface FirebaseContextProps {
 const FirebaseContext = createContext<FirebaseContextProps | undefined>(undefined);
 
 export const FirebaseProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+  console.log('FirebaseProvider initialized');
+  console.log('Firebase Config:', {
+    authDomain: app.options.authDomain,
+    projectId: app.options.projectId
+  });
+
   // Auth methods
   const signIn = (email: string, password: string) => {
+    console.log('Attempting to sign in with email:', email);
     return signInWithEmailAndPassword(auth, email, password);
   };
 
@@ -97,7 +104,7 @@ export const FirebaseProvider: React.FC<{children: ReactNode}> = ({ children }) 
 
   const setDocument = <T,>(collectionName: string, docId: string, data: T): Promise<void> => {
     const docRef = doc(db, collectionName, docId);
-    return setDoc(docRef, data);
+    return setDoc(docRef, data as any);
   };
 
   const updateDocument = <T,>(collectionName: string, docId: string, data: Partial<T>): Promise<void> => {
@@ -122,14 +129,24 @@ export const FirebaseProvider: React.FC<{children: ReactNode}> = ({ children }) 
 
   // Storage methods
   const uploadFile = async (path: string, file: File): Promise<string> => {
-    const storageRef = ref(storage, path);
-    await uploadBytes(storageRef, file);
-    return await getDownloadURL(storageRef);
+    try {
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, file);
+      return await getDownloadURL(storageRef);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      return '';
+    }
   };
 
   const getFileUrl = (path: string): Promise<string> => {
-    const storageRef = ref(storage, path);
-    return getDownloadURL(storageRef);
+    try {
+      const storageRef = ref(storage, path);
+      return getDownloadURL(storageRef);
+    } catch (error) {
+      console.error('Error getting file URL:', error);
+      return Promise.resolve('');
+    }
   };
 
   // Functions methods

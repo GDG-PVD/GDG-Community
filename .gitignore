@@ -81,3 +81,25 @@ vector_store/
 # Virtual environments
 venv/
 .venv/
+# Private implementation files
+src/ui/.env.local
+src/ui/.env.*.local
+
+# Sensitive production files
+.env
+.env.production
+.env.production.local
+.firebaserc
+firebase-admin-sdk-*.json
+*-service-account.json
+
+# Firebase deployment cache
+.firebase/
+
+# OAuth tokens
+oauth-tokens.json
+tokens/
+
+# Private configuration
+/private/
+/config/production/

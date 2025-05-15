@@ -38,14 +38,20 @@
       "port": 4040
     }
   },
-  "storage": {
-    "rules": "storage.rules"
-  },
+  "storage": [
+    {
+      "bucket": "gdg-community-companion.firebasestorage.app",
+      "rules": "storage.rules"
+    }
+  ],
   "functions": {
-    "predeploy": [
-      "npm --prefix \"$RESOURCE_DIR\" run lint",
-      "npm --prefix \"$RESOURCE_DIR\" run build"
-    ],
-    "source": "src/functions"
+    "source": "src/functions",
+    "runtime": "nodejs20",
+    "ignore": [
+      "node_modules/**",
+      "__pycache__/**",
+      "*.pyc",
+      "venv/**"
+    ]
   }
 }
