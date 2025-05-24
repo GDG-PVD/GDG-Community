@@ -1,0 +1,63 @@
+# Pre-commit hooks configuration
+# Install with: pip install pre-commit && pre-commit install
+
+repos:
+  # Secret scanning with Gitleaks
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.0
+    hooks:
+      - id: gitleaks
+
+  # Additional security checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-added-large-files
+        args: ['--maxkb=1024']
+      - id: check-json
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: no-commit-to-branch
+        args: ['--branch', 'main', '--pattern', 'release/*']
+
+  # TypeScript/JavaScript linting
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.56.0
+    hooks:
+      - id: eslint
+        files: \.(js|jsx|ts|tsx)$
+        types: [file]
+        additional_dependencies:
+          - eslint@8.56.0
+          - typescript@5.3.3
+          - '@typescript-eslint/parser@6.18.1'
+          - '@typescript-eslint/eslint-plugin@6.18.1'
+
+  # Python linting (for scripts)
+  - repo: https://github.com/psf/black
+    rev: 23.12.1
+    hooks:
+      - id: black
+        language_version: python3
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.1.11
+    hooks:
+      - id: ruff
+        args: [--fix]
+
+# Local hooks
+  - repo: local
+    hooks:
+      - id: check-env-files
+        name: Check for .env files
+        entry: bash -c 'if git diff --cached --name-only | grep -E "\.env$|\.env\.local$|\.env\.production$" | grep -v "\.example"; then echo "Error: Attempting to commit .env file with secrets!"; exit 1; fi'
+        language: system
+        pass_filenames: false
+      
+      - id: check-api-keys
+        name: Check for hardcoded API keys
+        entry: bash -c 'if git diff --cached --name-only --diff-filter=ACM | xargs grep -l "AIzaSy[0-9A-Za-z_-]\{33\}\|sk-[a-zA-Z0-9]\{48\}\|pcsk_[a-zA-Z0-9_-]\{48,\}" 2>/dev/null; then echo "Error: Hardcoded API keys detected!"; exit 1; fi'
+        language: system
+        pass_filenames: false
