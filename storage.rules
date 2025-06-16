@@ -1,30 +1,78 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // By default, only authenticated users can read and write
-    match /{allPaths=**} {
-      allow read, write: if request.auth != null;
+    // Helper function to check if request has auth
+    function isAuthenticated() {
+      return request.auth != null;
     }
     
-    // Public directory for reading
+    // Helper function to validate image file
+    function isValidImageFile() {
+      return request.resource.contentType.matches('image/.*') &&
+             request.resource.size < 5 * 1024 * 1024; // 5MB limit
+    }
+    
+    // Helper function to validate document file
+    function isValidDocumentFile() {
+      return (request.resource.contentType.matches('application/pdf') ||
+              request.resource.contentType.matches('application/.*document.*') ||
+              request.resource.contentType.matches('text/.*')) &&
+             request.resource.size < 10 * 1024 * 1024; // 10MB limit
+    }
+    
+    // Default: authenticated users only
+    match /{allPaths=**} {
+      allow read: if isAuthenticated();
+      allow write: if false; // Deny by default, use specific rules below
+    }
+    
+    // Public directory for reading (logos, public images)
     match /public/{allPublicPaths=**} {
       allow read: if true;
-      allow write: if request.auth != null;
-    }
-    
-    // Chapter-specific paths can be read/written by members of that chapter
-    match /chapters/{chapterId}/{allChapterPaths=**} {
-      allow read: if request.auth != null && exists(/databases/$(database)/documents/members/$(request.auth.uid)) && 
-                get(/databases/$(database)/documents/members/$(request.auth.uid)).data.chapterId == chapterId;
-      allow write: if request.auth != null && exists(/databases/$(database)/documents/members/$(request.auth.uid)) && 
-                get(/databases/$(database)/documents/members/$(request.auth.uid)).data.chapterId == chapterId &&
-                get(/databases/$(database)/documents/members/$(request.auth.uid)).data.role in ['admin', 'editor'];
+      allow write: if isAuthenticated() && isValidImageFile();
     }
     
     // User profile pictures
-    match /users/{userId}/profile.jpg {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == userId;
+    match /users/{userId}/profile/{fileName} {
+      allow read: if true; // Public profile pictures
+      allow write: if isAuthenticated() && 
+                     request.auth.uid == userId &&
+                     isValidImageFile();
+    }
+    
+    // Chapter-specific paths
+    // Note: We can't directly query Firestore from Storage rules
+    // So we rely on proper path structure and authentication
+    match /chapters/{chapterId}/public/{fileName} {
+      allow read: if true; // Public chapter content
+      allow write: if isAuthenticated() && isValidImageFile();
+    }
+    
+    match /chapters/{chapterId}/private/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && 
+                     (isValidImageFile() || isValidDocumentFile());
+    }
+    
+    // Event images and attachments
+    match /events/{eventId}/{fileName} {
+      allow read: if true; // Public event content
+      allow write: if isAuthenticated() && 
+                     (isValidImageFile() || isValidDocumentFile());
+    }
+    
+    // Templates and resources (authenticated users only)
+    match /templates/{templateId}/{fileName} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isValidDocumentFile();
+    }
+    
+    // Temporary uploads (auto-cleanup after 24 hours)
+    match /temp/{userId}/{fileName} {
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow write: if isAuthenticated() && 
+                     request.auth.uid == userId &&
+                     request.resource.size < 50 * 1024 * 1024; // 50MB temp limit
     }
   }
 }

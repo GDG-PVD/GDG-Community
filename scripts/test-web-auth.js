@@ -4,15 +4,24 @@
 const { initializeApp } = require('firebase/app');
 const { getAuth, signInWithEmailAndPassword } = require('firebase/auth');
 
-// Use the exact same config as the web app
+// Load environment variables
+require('dotenv').config({ path: require('path').resolve(__dirname, '../src/ui/.env.local') });
+
+// Use Firebase config from environment
 const firebaseConfig = {
-  apiKey: "AIzaSyBnZXlz0ffaDpjQP56NkeQ2okhV3KVqsMk",
-  authDomain: "gdg-community-companion.firebaseapp.com",
-  projectId: "gdg-community-companion",
-  storageBucket: "gdg-community-companion.firebasestorage.app",
-  messagingSenderId: "512932129357",
-  appId: "1:512932129357:web:d390c9196e480a489d0a04"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID
 };
+
+// Validate config
+if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
+  console.error('Missing Firebase configuration. Please check your .env file.');
+  process.exit(1);
+}
 
 async function testAuth() {
   try {
@@ -21,8 +30,12 @@ async function testAuth() {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     
-    const email = 'szermer@gmail.com';
-    const password = 'Zaq12wsx';
+    const email = process.env.TEST_EMAIL;
+    const password = process.env.TEST_PASSWORD;
+    
+    if (!email || !password) {
+      throw new Error('TEST_EMAIL and TEST_PASSWORD environment variables are required');
+    }
     
     console.log('Attempting to sign in with:');
     console.log('Email:', email);

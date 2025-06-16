@@ -25,8 +25,12 @@ async function testLogin() {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     
-    const email = 'szermer@gmail.com';
-    const password = 'Zaq12wsx';
+    const email = process.env.TEST_EMAIL;
+    const password = process.env.TEST_PASSWORD;
+    
+    if (!email || !password) {
+      throw new Error('TEST_EMAIL and TEST_PASSWORD environment variables are required');
+    }
     
     console.log('Attempting to sign in...');
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
