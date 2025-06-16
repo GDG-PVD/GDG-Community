@@ -25,7 +25,7 @@ def setup_linkedin_oauth():
     print(f"Client Secret: {client_secret[:10]}...")
     
     # Redirect URI - update this to match your Firebase hosting URL
-    redirect_uri = "https://gdg-community-companion.web.app/oauth/linkedin/callback"
+    redirect_uri = "https://XXX.web.app/oauth/linkedin/callback"
     
     print(f"\nRedirect URI: {redirect_uri}")
     print("\n⚠️  Important: Make sure this redirect URI is added to your LinkedIn app!")

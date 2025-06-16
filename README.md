@@ -47,7 +47,7 @@ See our [Private Implementation Guide](./docs/setup/private-implementation/READM
 
 As of May 2025, the GDG Community Companion has been successfully deployed to production:
 
-- **Live URL**: https://gdg-community-companion.web.app
+- **Live URL**: https://XXX.web.app
 - **Backend**: Firebase Functions (Node.js 20)
 - **Database**: Firestore with role-based security rules
 - **Authentication**: Firebase Auth with email/password
@@ -124,8 +124,8 @@ bash scripts/setup-environment.sh
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/gdg-community-companion.git
-   cd gdg-community-companion
+   git clone https://github.com/yourusername/XXX.git
+   cd XXX
    ```
 
 2. **Install dependencies**

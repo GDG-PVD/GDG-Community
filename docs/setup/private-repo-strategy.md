@@ -26,7 +26,7 @@ For production deployments, we strongly recommend maintaining a private reposito
 
 ### Public Template Repository (This repo)
 ```
-github.com/your-org/gdg-community-companion
+github.com/your-org/XXX
 ├── src/                    # Core application code
 ├── docs/                   # General documentation
 ├── scripts/                # Setup scripts
@@ -36,7 +36,7 @@ github.com/your-org/gdg-community-companion
 
 ### Private Production Repository
 ```
-github.com/your-org/gdg-community-companion-private
+github.com/your-org/XXX-private
 ├── src/                    # Forked/copied application code
 ├── .env.production        # Real production credentials
 ├── .env.production.local  # Local overrides
@@ -55,15 +55,15 @@ github.com/your-org/gdg-community-companion-private
 ### Step 2: Copy Template Code
 ```bash
 # Clone the public template
-git clone https://github.com/your-org/gdg-community-companion
-cd gdg-community-companion
+git clone https://github.com/your-org/XXX
+cd XXX
 
 # Remove git history
 rm -rf .git
 
 # Initialize new repository
 git init
-git remote add origin https://github.com/your-org/gdg-community-companion-private
+git remote add origin https://github.com/your-org/XXX-private
 ```
 
 ### Step 3: Configure Production Environment
@@ -114,7 +114,7 @@ git push -u origin main
 ### Syncing with Template
 ```bash
 # Add public template as upstream
-git remote add upstream https://github.com/original/gdg-community-companion
+git remote add upstream https://github.com/original/XXX
 
 # Fetch latest changes
 git fetch upstream

@@ -4,7 +4,7 @@
 
 ### 1. Frontend (Hosting)
 - **Status**: ✅ Live
-- **URL**: https://gdg-community-companion.web.app
+- **URL**: https://XXX.web.app
 - **Features**: React UI with Material Design
 
 ### 2. Firestore Security Rules
@@ -24,12 +24,12 @@
 ### 1. Cloud Functions
 - **Status**: ❌ Requires Blaze Plan
 - **Issue**: Your Firebase project needs to be upgraded to the Blaze (pay-as-you-go) plan
-- **Action**: Visit https://console.firebase.google.com/project/gdg-community-companion/usage/details
+- **Action**: Visit https://console.firebase.google.com/project/XXX/usage/details
 
 ### 2. Storage Rules
 - **Status**: ❌ Storage not initialized
 - **Action**: 
-  1. Go to https://console.firebase.google.com/project/gdg-community-companion/storage
+  1. Go to https://console.firebase.google.com/project/XXX/storage
   2. Click "Get Started" to set up Firebase Storage
   3. Then run: `firebase deploy --only storage:rules`
 

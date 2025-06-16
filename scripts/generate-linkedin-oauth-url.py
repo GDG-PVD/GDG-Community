@@ -17,7 +17,7 @@ def generate_linkedin_oauth_url():
         return
     
     # Redirect URI - update this to match your Firebase hosting URL
-    redirect_uri = "https://gdg-community-companion.web.app/oauth/linkedin/callback"
+    redirect_uri = "https://XXX.web.app/oauth/linkedin/callback"
     
     # Build authorization URL
     auth_params = {

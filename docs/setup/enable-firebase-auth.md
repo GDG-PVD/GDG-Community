@@ -4,7 +4,7 @@ This guide walks you through enabling Firebase Authentication for the GDG Commun
 
 ## Step 1: Enable Authentication in Firebase Console
 
-1. Go to https://console.firebase.google.com/project/gdg-community-companion/authentication
+1. Go to https://console.firebase.google.com/project/XXX/authentication
 2. Click "Get Started" if this is your first time
 3. Navigate to the "Sign-in method" tab
 4. Enable "Email/Password" authentication:
@@ -17,8 +17,8 @@ This guide walks you through enabling Firebase Authentication for the GDG Commun
 
 1. In the Authentication section, go to "Settings" tab
 2. Under "Authorized domains", ensure your domains are listed:
-   - `gdg-community-companion.web.app`
-   - `gdg-community-companion.firebaseapp.com`
+   - `xxx.web.app`
+   - `xxx.firebaseapp.com`
    - `localhost` (already included by default)
 
 ## Step 3: Create Admin User
@@ -26,7 +26,7 @@ This guide walks you through enabling Firebase Authentication for the GDG Commun
 Once authentication is enabled, run the admin user creation script:
 
 ```bash
-cd /Users/stephenszermer/Dev/GDG-Community
+cd ~/Dev/GDG-Community
 node scripts/create-admin-user.js
 ```
 
@@ -47,7 +47,7 @@ This creates the necessary Firestore collections and initial data.
 
 ## Step 5: Test Authentication
 
-1. Access your app at https://gdg-community-companion.web.app
+1. Access your app at https://xxx.web.app
 2. Click "Sign In" 
 3. Enter your admin credentials
 4. Verify you can access all features

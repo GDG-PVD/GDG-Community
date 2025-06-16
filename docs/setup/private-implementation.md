@@ -36,8 +36,8 @@ This allows you to:
 
 ```bash
 # Clone the public repository
-git clone https://github.com/gdg-community/gdg-community-companion.git
-cd gdg-community-companion
+git clone https://github.com/gdg-community/XXX.git
+cd XXX
 
 # Create a new private repository (e.g. on GitHub)
 # Then add it as a remote
@@ -178,7 +178,7 @@ To receive updates from the public repository:
 
 ```bash
 # Add the public repository as a remote (if not already done)
-git remote add public https://github.com/gdg-community/gdg-community-companion.git
+git remote add public https://github.com/gdg-community/XXX.git
 
 # Fetch updates from the public repository
 git fetch public

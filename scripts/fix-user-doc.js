@@ -22,7 +22,7 @@ if (!validRoles.includes(role)) {
 
 // Initialize Admin SDK (will use default credentials)
 initializeApp({
-  projectId: process.env.FIREBASE_PROJECT_ID || 'gdg-community-companion'
+  projectId: process.env.FIREBASE_PROJECT_ID || 'XXX'
 });
 
 const db = getFirestore();

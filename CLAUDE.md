@@ -243,8 +243,8 @@ node scripts/verify-firebase-config.js    # Verify Firebase configuration
 - Configure in `firebase.json`
 
 ### Production URLs
-- Live App: https://gdg-community-companion.web.app
-- Functions: https://us-central1-gdg-community-companion.cloudfunctions.net
+- Live App: https://XXX.web.app
+- Functions: https://us-central1-XXX.cloudfunctions.net
 
 ## Security Considerations
 
@@ -273,7 +273,7 @@ node scripts/verify-firebase-config.js    # Verify Firebase configuration
 1. Update code and test locally
 2. Build UI: `cd src/ui && npm run build`
 3. Deploy: `firebase deploy`
-4. Verify: Check https://gdg-community-companion.web.app
+4. Verify: Check https://XXX.web.app
 
 ### Adding New Cloud Function
 1. Add function to `src/functions/index.js`
@@ -306,7 +306,7 @@ python scripts/generate-linkedin-oauth-url.py
 
 ## Current Production Status
 - **Deployed**: Yes (May 15, 2025)
-- **URL**: https://gdg-community-companion.web.app
+- **URL**: https://XXX.web.app
 - **Backend**: Node.js Cloud Functions (Firebase)
 - **Database**: Firestore with security rules
 - **Auth**: Firebase Authentication enabled

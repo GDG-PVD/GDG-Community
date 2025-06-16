@@ -16,7 +16,7 @@ def generate_linkedin_oauth_url(product_type="basic"):
         print("❌ LinkedIn CLIENT_ID not found in .env file")
         return
     
-    redirect_uri = "https://gdg-community-companion.web.app/oauth/linkedin/callback"
+    redirect_uri = "https://XXX.web.app/oauth/linkedin/callback"
     
     # Different scope sets based on enabled products
     scope_sets = {
@@ -56,7 +56,7 @@ def generate_linkedin_oauth_url(product_type="basic"):
         "client_id": client_id,
         "redirect_uri": redirect_uri,
         "scope": " ".join(scopes),
-        "state": "gdg-community-companion"
+        "state": "XXX"
     }
     
     auth_url = f"https://www.linkedin.com/oauth/v2/authorization?{urlencode(auth_params)}"

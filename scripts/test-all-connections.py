@@ -59,7 +59,7 @@ def test_firebase():
         project_id = os.getenv("GOOGLE_CLOUD_PROJECT")
         print(f"  Project ID: {project_id}")
         
-        if project_id == "gdg-community-companion":
+        if project_id == "XXX":
             print("✅ Firebase project configured correctly!")
             return True
         else:
@@ -164,7 +164,7 @@ def main():
     print("2. Create admin user:")
     print("   node scripts/create-admin-user.js")
     print("3. Test the live app:")
-    print("   https://gdg-community-companion.web.app")
+    print("   https://XXX.web.app")
 
 if __name__ == "__main__":
     main()

@@ -17,7 +17,7 @@ def generate_linkedin_oauth_url():
         return
     
     # Redirect URI matching your app settings
-    redirect_uri = "https://gdg-community-companion.web.app/oauth/linkedin/callback"
+    redirect_uri = "https://XXX.web.app/oauth/linkedin/callback"
     
     # Updated scopes for LinkedIn API v2
     # Note: Some scopes have changed in the newer API versions
@@ -35,7 +35,7 @@ def generate_linkedin_oauth_url():
         "client_id": client_id,
         "redirect_uri": redirect_uri,
         "scope": " ".join(scopes),
-        "state": "gdg-community-companion"  # Optional state parameter for security
+        "state": "XXX"  # Optional state parameter for security
     }
     
     auth_url = f"https://www.linkedin.com/oauth/v2/authorization?{urlencode(auth_params)}"

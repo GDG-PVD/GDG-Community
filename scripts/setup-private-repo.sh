@@ -4,8 +4,8 @@
 # Usage: ./setup-private-repo.sh [your-github-username] [private-repo-name]
 
 GITHUB_USER=${1:-"your-github-username"}
-PRIVATE_REPO=${2:-"gdg-community-companion-private"}
-PUBLIC_TEMPLATE="https://github.com/your-org/gdg-community-companion"
+PRIVATE_REPO=${2:-"XXX-private"}
+PUBLIC_TEMPLATE="https://github.com/your-org/XXX"
 
 echo "=== Setting up private production repository ==="
 echo "GitHub User: $GITHUB_USER"
@@ -114,7 +114,7 @@ This is the private production repository for our GDG chapter's Community Compan
 ## Syncing with Public Template
 
 ```bash
-git remote add upstream https://github.com/original/gdg-community-companion
+git remote add upstream https://github.com/original/XXX
 git fetch upstream
 git merge upstream/main
 ```

@@ -69,7 +69,7 @@ cd ../..
 
 ```bash
 firebase login
-firebase projects:create gdg-community-companion
+firebase projects:create XXX
 ```
 
 2. Initialize Firebase features:

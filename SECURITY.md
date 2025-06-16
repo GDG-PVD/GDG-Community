@@ -40,7 +40,7 @@ Fix the storage rules in `storage.rules`:
 exists(/databases/$(database)/documents/members/$(request.auth.uid))
 
 // CORRECT - Use Firestore instance directly
-exists(/databases/gdg-community-companion/documents/members/$(request.auth.uid))
+exists(/databases/XXX/documents/members/$(request.auth.uid))
 ```
 
 **Additional Storage Security**:

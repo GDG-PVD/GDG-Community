@@ -7,18 +7,18 @@ All services have been successfully deployed and configured.
 ## Live Services
 
 ### Frontend Application
-- **URL**: https://gdg-community-companion.web.app
-- **Alternative**: https://gdg-community-companion.firebaseapp.com
+- **URL**: https://XXX.web.app
+- **Alternative**: https://XXX.firebaseapp.com
 - **Status**: ✅ Live and configured with production settings
 
 ### Cloud Functions (APIs)
 1. **Content Generation**
-   - URL: https://us-central1-gdg-community-companion.cloudfunctions.net/generateSocialContent
+   - URL: https://us-central1-XXX.cloudfunctions.net/generateSocialContent
    - Method: POST
    - Purpose: Generate social media content
 
 2. **Health Check**
-   - URL: https://us-central1-gdg-community-companion.cloudfunctions.net/healthCheck
+   - URL: https://us-central1-XXX.cloudfunctions.net/healthCheck
    - Method: GET
    - Purpose: API health monitoring
 
@@ -45,11 +45,11 @@ All services have been successfully deployed and configured.
 ## Testing Your Deployment
 
 ### 1. Test Frontend
-Visit: https://gdg-community-companion.web.app
+Visit: https://XXX.web.app
 
 ### 2. Test API Health
 ```bash
-curl https://us-central1-gdg-community-companion.cloudfunctions.net/healthCheck
+curl https://us-central1-XXX.cloudfunctions.net/healthCheck
 ```
 
 Expected response:
@@ -62,7 +62,7 @@ Expected response:
 
 ### 3. Test Content Generation
 ```bash
-curl -X POST https://us-central1-gdg-community-companion.cloudfunctions.net/generateSocialContent \
+curl -X POST https://us-central1-XXX.cloudfunctions.net/generateSocialContent \
   -H "Content-Type: application/json" \
   -d '{
     "event": {
@@ -124,7 +124,7 @@ node scripts/init-firebase-data.js
 
 ## Monitoring & Logs
 
-- **Firebase Console**: https://console.firebase.google.com/project/gdg-community-companion
+- **Firebase Console**: https://console.firebase.google.com/project/XXX
 - **Functions Logs**: Firebase Console > Functions > Logs
 - **Analytics**: Firebase Console > Analytics
 - **Performance**: Firebase Console > Performance

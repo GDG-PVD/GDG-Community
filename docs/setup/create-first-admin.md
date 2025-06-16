@@ -7,7 +7,7 @@ Now that Firebase Authentication is enabled, follow these steps to create your f
 Use the existing create-admin-user.js script with command-line arguments:
 
 ```bash
-cd /Users/stephenszermer/Dev/GDG-Community
+cd ~/Dev/GDG-Community
 node scripts/create-admin-user.js <email> <password> "<display name>" <chapter-id>
 ```
 
@@ -21,7 +21,7 @@ node scripts/create-admin-user.js admin@gdg.com mypassword123 "Admin User" gdg-p
 Use the interactive script which prompts for input:
 
 ```bash
-cd /Users/stephenszermer/Dev/GDG-Community
+cd ~/Dev/GDG-Community
 node scripts/create-admin-user-interactive.js
 ```
 
@@ -37,7 +37,7 @@ It will prompt you for:
 For quick testing, create a demo admin:
 
 ```bash
-cd /Users/stephenszermer/Dev/GDG-Community
+cd ~/Dev/GDG-Community
 
 # Create a test admin user
 node scripts/create-admin-user.js test@gdg.com testpass123 "Test Admin" gdg-demo
@@ -59,7 +59,7 @@ node scripts/create-admin-user.js test@gdg.com testpass123 "Test Admin" gdg-demo
    - This creates sample chapters, events, and templates
 
 3. Access the app:
-   - Open https://gdg-community-companion.web.app
+   - Open https://xxx
    - Sign in with your admin credentials
    - You should now have full access to all features
 

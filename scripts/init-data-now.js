@@ -140,7 +140,7 @@ async function initializeData() {
 
     console.log('\n✅ Data initialized successfully!');
     console.log('\nYou can now access the app at:');
-    console.log('https://gdg-community-companion.web.app');
+    console.log('https://XXX.web.app');
 
     // Sign out
     await auth.signOut();

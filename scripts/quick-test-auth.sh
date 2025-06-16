@@ -74,6 +74,6 @@ echo
 echo "Test completed!"
 echo
 echo "You can now:"
-echo "1. Access the app at https://gdg-community-companion.web.app"
+echo "1. Access the app at https://XXX.web.app"
 echo "2. Sign in with email: $EMAIL and password: $PASSWORD"
 echo "3. Create more users as needed"
