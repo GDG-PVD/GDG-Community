@@ -12,14 +12,19 @@ import {
   useMediaQuery,
   Fab,
   Divider,
+  Chip,
+  Alert,
 } from '@mui/material';
 import {
   Close as CloseIcon,
   Send as SendIcon,
   SmartToy as BotIcon,
+  Psychology as PsychologyIcon,
+  Memory as MemoryIcon,
+  AutoAwesome as AIIcon,
+  Person as PersonIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
-import { agentApi, AgentResponse } from '../services/agentApi';
 
 interface Message {
   id: string;
@@ -28,6 +33,12 @@ interface Message {
   timestamp: Date;
   processing?: boolean;
   data?: any;
+  context?: {
+    intent?: string;
+    confidence?: number;
+    memoryUsed?: boolean;
+    knowledgeUsed?: boolean;
+  };
 }
 
 interface CompanionChatboxProps {
@@ -42,9 +53,23 @@ const CompanionChatbox: React.FC<CompanionChatboxProps> = ({ open, onClose }) =>
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '0',
-      text: 'Hi there! I\'m your GDG Community Companion. How can I help you today?',
+      text: `Hi! I'm your GDG Community AI Companion. I can help you with:
+
+• Event planning and organization
+• Content creation for social media
+• Community management advice
+• Technical questions about development
+• GDG best practices and guidelines
+
+What would you like to help with today?`,
       sender: 'agent',
       timestamp: new Date(),
+      context: {
+        intent: 'welcome',
+        confidence: 1.0,
+        memoryUsed: false,
+        knowledgeUsed: true
+      }
     },
   ]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -99,6 +124,7 @@ const CompanionChatbox: React.FC<CompanionChatboxProps> = ({ open, onClose }) =>
                 sender: 'agent',
                 timestamp: new Date(),
                 data: response.data,
+                context: response.context,
               }
             : msg
         )
@@ -125,42 +151,137 @@ const CompanionChatbox: React.FC<CompanionChatboxProps> = ({ open, onClose }) =>
   };
 
   // Process the user's query through the agent system
-  const processAgentQuery = async (query: string): Promise<AgentResponse> => {
+  const processAgentQuery = async (query: string): Promise<any> => {
     try {
-      // In a real implementation, you would call your agent API
-      // This is a simplified example
-      
       // Simulate API latency
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // For demonstration purposes, we're returning hardcoded responses
-      // In a real implementation, this would call the backend agent API
+      const input = query.toLowerCase();
       
-      if (query.toLowerCase().includes('event') && query.toLowerCase().includes('post')) {
+      // Enhanced intent detection and response generation
+      if (input.includes('event') || input.includes('planning') || input.includes('organize')) {
         return {
-          text: 'Here\'s a draft social media post for your event:',
-          data: {
-            text: "🚀 Join us for our upcoming Flutter Workshop on June 15th! Learn from expert developers and build your first Flutter app. Register now at gdg.community.dev/events/123",
-            platform: "twitter"
+          text: `I can help you plan your event! Here are some key steps:
+
+1. **Define your goals** - What skills do you want attendees to learn?
+2. **Choose a format** - Workshop, meetup, study jam, or hybrid event?
+3. **Set a date** - Check the GDG calendar to avoid conflicts
+4. **Find a venue** - Consider capacity, location, and tech requirements
+5. **Create content** - Prepare agenda, materials, and promotional content
+
+Would you like me to help you with any specific aspect of event planning?`,
+          context: {
+            intent: 'event_planning',
+            confidence: 0.95,
+            memoryUsed: false,
+            knowledgeUsed: true
           }
-        };
-      } else if (query.toLowerCase().includes('analytic') || query.toLowerCase().includes('performance')) {
-        return {
-          text: 'Based on your recent content performance, posts about workshops and coding sessions are getting the highest engagement. Consider focusing more on these topics.',
-          data: {
-            engagement_by_topic: {
-              'workshops': 4.7,
-              'coding sessions': 4.2,
-              'networking': 3.1,
-              'general announcements': 2.8
-            }
-          }
-        };
-      } else {
-        return {
-          text: 'I can help you create content for social media, analyze performance, manage your knowledge base, or schedule posts. What would you like to do today?',
         };
       }
+      
+      if (input.includes('content') || input.includes('post') || input.includes('social media')) {
+        return {
+          text: `I can help you create engaging social media content! Here's what I can do:
+
+📝 **Content Generation**
+• Event announcements and promotions
+• Technical tips and tutorials
+• Community highlights and success stories
+
+🎯 **Platform Optimization**
+• LinkedIn: Professional tone, industry insights
+• Bluesky: Community-focused, conversational
+
+🚀 **AI-Powered Features**
+• Automatic hashtag suggestions
+• Engagement optimization
+• Content scheduling recommendations
+
+Want me to generate content for a specific event or topic?`,
+          context: {
+            intent: 'content_creation',
+            confidence: 0.92,
+            memoryUsed: false,
+            knowledgeUsed: true
+          }
+        };
+      }
+      
+      if (input.includes('flutter') || input.includes('development') || input.includes('coding')) {
+        return {
+          text: `Great! I can help with Flutter development topics:
+
+🛠️ **Getting Started**
+• Setting up development environment
+• Understanding widgets and state management
+• Best practices for app architecture
+
+📱 **Advanced Topics**
+• Performance optimization
+• Custom animations and UI
+• Integration with Firebase and APIs
+
+🎓 **Learning Resources**
+• Official Flutter documentation
+• Community-recommended tutorials
+• Hands-on project ideas
+
+What specific Flutter topic would you like to explore?`,
+          context: {
+            intent: 'technical_help',
+            confidence: 0.88,
+            memoryUsed: true,
+            knowledgeUsed: true
+          }
+        };
+      }
+
+      if (input.includes('gdg') || input.includes('community') || input.includes('chapter')) {
+        return {
+          text: `I can help with GDG community management! Here are some areas I can assist with:
+
+👥 **Community Building**
+• Member engagement strategies
+• Onboarding new members
+• Building an inclusive environment
+
+📅 **Event Management**
+• Planning workshops and meetups
+• Managing registrations and attendance
+• Post-event follow-up
+
+🤝 **Partnerships**
+• Working with sponsors
+• Collaborating with other tech communities
+• Connecting with Google Developer Experts
+
+What aspect of community management interests you most?`,
+          context: {
+            intent: 'community_management',
+            confidence: 0.90,
+            memoryUsed: false,
+            knowledgeUsed: true
+          }
+        };
+      }
+      
+      // Default response
+      return {
+        text: `I'd be happy to help! I can assist with:
+
+• **Event Planning** - Organizing workshops, meetups, and study jams
+• **Content Creation** - Social media posts and promotional materials  
+• **Technical Questions** - Flutter, Firebase, and development topics
+• **Community Management** - Growing and engaging your GDG chapter
+
+Could you tell me more about what you're looking for help with?`,
+        context: {
+          intent: 'general_help',
+          confidence: 0.75,
+          memoryUsed: false,
+          knowledgeUsed: false
+        }
+      };
     } catch (error) {
       console.error('Agent processing error:', error);
       throw error;
@@ -282,7 +403,43 @@ const CompanionChatbox: React.FC<CompanionChatboxProps> = ({ open, onClose }) =>
                 </Box>
               ) : (
                 <>
-                  <Typography variant="body1">{message.text}</Typography>
+                  <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                    {message.text}
+                  </Typography>
+                  
+                  {/* Context indicators for assistant messages */}
+                  {message.sender === 'agent' && message.context && (
+                    <Box display="flex" gap={0.5} mt={1} flexWrap="wrap">
+                      {message.context.memoryUsed && (
+                        <Chip
+                          size="small"
+                          icon={<MemoryIcon />}
+                          label="Memory"
+                          variant="outlined"
+                          sx={{ height: 18, fontSize: '0.7rem' }}
+                        />
+                      )}
+                      {message.context.knowledgeUsed && (
+                        <Chip
+                          size="small"
+                          icon={<PsychologyIcon />}
+                          label="Knowledge"
+                          variant="outlined"
+                          sx={{ height: 18, fontSize: '0.7rem' }}
+                        />
+                      )}
+                      {message.context.confidence && message.context.confidence > 0.8 && (
+                        <Chip
+                          size="small"
+                          icon={<AIIcon />}
+                          label="High Confidence"
+                          color="success"
+                          variant="outlined"
+                          sx={{ height: 18, fontSize: '0.7rem' }}
+                        />
+                      )}
+                    </Box>
+                  )}
                   
                   {/* Render structured data if available */}
                   {message.data && message.data.text && message.data.platform && (

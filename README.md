@@ -47,6 +47,55 @@ See our [Private Implementation Guide](./docs/setup/private-implementation/READM
 
 This project is currently in active development. See the [Development Roadmap](./docs/roadmap.md) for more details.
 
+## Quick Start
+
+### Automated Setup
+Run the setup script to configure your development environment:
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/gdg-community.git
+cd gdg-community
+
+# Run automated setup
+bash scripts/setup-environment.sh
+```
+
+### Manual Setup
+1. **Environment Configuration:**
+   ```bash
+   # Copy environment templates
+   cp src/ui/.env.example src/ui/.env.local
+   cp src/.env.example src/.env
+   ```
+
+2. **Install Dependencies:**
+   ```bash
+   # Frontend
+   cd src/ui && npm install --legacy-peer-deps
+   
+   # Backend (Python)
+   uv venv && source .venv/bin/activate
+   uv pip install -r requirements.txt
+   ```
+
+3. **Configure Services:**
+   - Firebase project setup
+   - Pinecone vector database
+   - Google Cloud ADK
+   - Social media API keys
+   
+   See [Environment Setup Guide](./docs/setup/environment-setup.md) for detailed instructions.
+
+4. **Start Development:**
+   ```bash
+   # Frontend
+   cd src/ui && npm start
+   
+   # Backend emulators
+   firebase emulators:start
+   ```
+
 ## Getting Started
 
 Instructions for setup and contribution are available in the [Documentation](./docs/README.md).

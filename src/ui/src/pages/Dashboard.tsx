@@ -27,6 +27,10 @@ import {
   Edit as EditIcon,
   Schedule as ScheduleIcon,
   AddCircleOutline as AddIcon,
+  AutoAwesome as AIIcon,
+  Memory as MemoryIcon,
+  Psychology as PsychologyIcon,
+  Lightbulb as LightbulbIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import { Event, SocialPost } from '../types';
@@ -129,6 +133,40 @@ const Dashboard: React.FC = () => {
           </IconButton>
         </Box>
       </Box>
+
+      {/* AI Features Banner */}
+      <Alert 
+        severity="info" 
+        sx={{ mb: 3, bgcolor: 'primary.50', borderColor: 'primary.200' }}
+        icon={<AIIcon />}
+      >
+        <Typography variant="h6" sx={{ mb: 1 }}>
+          🚀 AI-Powered Features Available
+        </Typography>
+        <Box display="flex" gap={2} flexWrap="wrap">
+          <Button 
+            size="small" 
+            startIcon={<AIIcon />} 
+            onClick={() => navigate('/generate-content')}
+          >
+            AI Content Generator
+          </Button>
+          <Button 
+            size="small" 
+            startIcon={<LightbulbIcon />} 
+            onClick={() => navigate('/knowledge')}
+          >
+            Knowledge Base
+          </Button>
+          <Button 
+            size="small" 
+            startIcon={<MemoryIcon />} 
+            onClick={() => navigate('/memory')}
+          >
+            Memory Dashboard
+          </Button>
+        </Box>
+      </Alert>
 
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
