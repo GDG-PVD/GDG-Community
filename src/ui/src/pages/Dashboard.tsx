@@ -33,7 +33,7 @@ import {
   Lightbulb as LightbulbIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
-import { Event, SocialPost } from '../types';
+import { GDGEvent, SocialPost } from '../types';
 
 const Dashboard: React.FC = () => {
   const theme = useTheme();
@@ -43,7 +43,7 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Mock data - in a real implementation, this would be fetched from the API
-  const upcomingEvents: Event[] = [
+  const upcomingEvents: GDGEvent[] = [
     {
       id: '1',
       title: 'Flutter Workshop: Building Beautiful UIs',
@@ -392,7 +392,7 @@ const Dashboard: React.FC = () => {
                         size="small"
                         color="primary"
                         startIcon={<MessageIcon />}
-                        onClick={() => generatePostForEvent(event.id)}
+                        onClick={() => event.id && generatePostForEvent(event.id)}
                       >
                         Generate Post
                       </Button>
@@ -527,7 +527,7 @@ const Dashboard: React.FC = () => {
                       <Button
                         size="small"
                         startIcon={<EditIcon />}
-                        onClick={() => navigate(`/content/edit/${post.id}`)}
+                        onClick={() => post.id && navigate(`/content/edit/${post.id}`)}
                       >
                         Edit
                       </Button>
@@ -536,7 +536,7 @@ const Dashboard: React.FC = () => {
                           size="small"
                           color="primary"
                           startIcon={<TrendingUpIcon />}
-                          onClick={() => navigate(`/analytics/post/${post.id}`)}
+                          onClick={() => post.id && navigate(`/analytics/post/${post.id}`)}
                         >
                           View Performance
                         </Button>

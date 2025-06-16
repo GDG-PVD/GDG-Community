@@ -1,7 +1,7 @@
 // Common Types for the GDG Community Companion UI
 
 export interface Chapter {
-  id: string;
+  id?: string;
   name: string;
   location: string;
   founded: string;
@@ -19,7 +19,7 @@ export interface Chapter {
 }
 
 export interface User {
-  id: string;
+  id?: string;
   email: string;
   displayName: string;
   role: 'admin' | 'editor' | 'viewer';
@@ -27,8 +27,8 @@ export interface User {
   photoURL?: string;
 }
 
-export interface Event {
-  id: string;
+export interface GDGEvent {
+  id?: string;
   title: string;
   date: string;
   time: string;
@@ -52,7 +52,7 @@ export interface Event {
 }
 
 export interface Template {
-  id: string;
+  id?: string;
   name: string;
   description?: string;
   type: 'event-announcement' | 'event-recap' | 'news' | 'welcome' | 'custom';
@@ -65,7 +65,7 @@ export interface Template {
 }
 
 export interface SocialPost {
-  id: string;
+  id?: string;
   text: string;
   platform: 'twitter' | 'linkedin' | 'facebook' | 'instagram';
   event_id?: string;
@@ -89,7 +89,7 @@ export interface SocialPost {
 }
 
 export interface KnowledgeItem {
-  id: string;
+  id?: string;
   title: string;
   content: string;
   type: 'template' | 'brand_voice' | 'workflow' | 'procedure' | 'best_practice' | 'performance_data' | 'general';
@@ -127,7 +127,7 @@ export interface ContentAnalytics {
 }
 
 export interface ChapterSettings {
-  id: string;
+  id?: string;
   chapter_id: string;
   brand_colors: {
     primary: string;
@@ -138,4 +138,25 @@ export interface ChapterSettings {
   auto_scheduling: boolean;
   notification_emails: string[];
   approval_required: boolean;
+}
+
+export interface Post {
+  id?: string;
+  title: string;
+  content: string;
+  author: string;
+  created_at: string;
+  updated_at?: string;
+  published?: boolean;
+  tags?: string[];
+}
+
+export interface Member {
+  id?: string;
+  name: string;
+  email: string;
+  joined_date: string;
+  role?: string;
+  active: boolean;
+  chapter_id: string;
 }

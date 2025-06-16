@@ -41,7 +41,7 @@ import {
   Check as CheckIcon
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
-import { Event } from '../types';
+import { GDGEvent } from '../types';
 
 interface PostContent {
   content: string;
@@ -56,7 +56,7 @@ const SocialMediaPost: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [event, setEvent] = useState<Event | null>(null);
+  const [event, setEvent] = useState<GDGEvent | null>(null);
   const [postContent, setPostContent] = useState<PostContent>({
     content: '',
     platform: 'bluesky',
@@ -85,17 +85,18 @@ const SocialMediaPost: React.FC = () => {
     setLoading(true);
     try {
       // Mock event data for demonstration
-      const mockEvent: Event = {
+      const mockEvent: GDGEvent = {
         id: eventId,
         title: 'Flutter Mobile Development Workshop',
         description: 'Learn Flutter development from basics to advanced concepts. Build your first mobile app with hands-on coding sessions.',
-        startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000).toISOString(),
+        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        time: '18:00',
+        duration: '3 hours',
         location: 'Tech Hub Providence',
-        eventType: 'workshop',
-        status: 'published',
-        createdBy: user?.uid || 'user',
-        chapterId: 'gdg-providence'
+        type: 'workshop',
+        status: 'scheduled',
+        created_by: user?.uid || 'user',
+        created_at: new Date().toISOString()
       };
 
       setEvent(mockEvent);
@@ -112,7 +113,7 @@ const SocialMediaPost: React.FC = () => {
     }
   };
 
-  const generateAIContent = async (eventData?: Event) => {
+  const generateAIContent = async (eventData?: GDGEvent) => {
     const targetEvent = eventData || event;
     if (!targetEvent) return;
 
@@ -123,16 +124,13 @@ const SocialMediaPost: React.FC = () => {
 
 ${targetEvent.description}
 
-📅 ${new Date(targetEvent.startDate).toLocaleDateString('en-US', {
+📅 ${new Date(targetEvent.date).toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       })}
-⏰ ${new Date(targetEvent.startDate).toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit'
-      })}
+⏰ ${targetEvent.time}
 📍 ${targetEvent.location}
 
 Perfect for developers wanting to enhance their mobile development skills! 🔥
@@ -289,7 +287,7 @@ Perfect for developers wanting to enhance their mobile development skills! 🔥
                   <Box display="flex" alignItems="center" gap={1} mb={1}>
                     <CalendarIcon fontSize="small" />
                     <Typography variant="body2">
-                      {new Date(event.startDate).toLocaleDateString('en-US', {
+                      {new Date(event.date).toLocaleDateString('en-US', {
                         weekday: 'long',
                         year: 'numeric',
                         month: 'long',
@@ -300,13 +298,7 @@ Perfect for developers wanting to enhance their mobile development skills! 🔥
                   <Box display="flex" alignItems="center" gap={1} mb={1}>
                     <AccessTimeIcon fontSize="small" />
                     <Typography variant="body2">
-                      {new Date(event.startDate).toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })} - {new Date(event.endDate).toLocaleTimeString('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
+                      {event.time} {event.duration && `(${event.duration})`}
                     </Typography>
                   </Box>
                 </Grid>
@@ -317,7 +309,7 @@ Perfect for developers wanting to enhance their mobile development skills! 🔥
                   </Box>
                   <Box display="flex" alignItems="center" gap={1} mb={1}>
                     <GroupIcon fontSize="small" />
-                    <Typography variant="body2">{event.eventType}</Typography>
+                    <Typography variant="body2">{event.type}</Typography>
                   </Box>
                 </Grid>
               </Grid>

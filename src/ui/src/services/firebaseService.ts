@@ -1,6 +1,7 @@
 import { collection, query, where, getDocs, addDoc, updateDoc, doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { db, storage } from './firebase';
+import { GDGEvent, Post, Member } from '../types';
 
 // Generic Firestore data service
 export class FirestoreService<T extends { id?: string }> {
@@ -94,42 +95,7 @@ export class StorageService {
 }
 
 // Example usage:
-export const EventsService = new FirestoreService<Event>('events');
+export const EventsService = new FirestoreService<GDGEvent>('events');
 export const PostsService = new FirestoreService<Post>('posts');
 export const MembersService = new FirestoreService<Member>('members');
 export const ChapterStorageService = new StorageService('chapters');
-
-// Types
-interface Event {
-  id?: string;
-  title: string;
-  date: string;
-  time: string;
-  description: string;
-  type: string;
-  location?: string;
-  created_by: string;
-  created_at: string;
-  status: 'draft' | 'scheduled' | 'completed' | 'cancelled';
-}
-
-interface Post {
-  id?: string;
-  text: string;
-  platform: string;
-  event_id?: string;
-  created_by: string;
-  created_at: string;
-  status: string;
-  scheduled_for?: string;
-  published_at?: string;
-}
-
-interface Member {
-  id?: string;
-  email: string;
-  displayName: string;
-  role: 'admin' | 'editor' | 'viewer';
-  chapterId: string;
-  photoURL?: string;
-}

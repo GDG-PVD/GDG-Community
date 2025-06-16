@@ -41,7 +41,7 @@ import {
   Psychology as PsychologyIcon,
   Memory as MemoryIcon,
 } from '@mui/icons-material';
-import { Event } from '../types';
+import { GDGEvent } from '../types';
 import { EventsService } from '../services/firebaseService';
 
 interface GeneratedContent {
@@ -79,7 +79,7 @@ const GenerateContent: React.FC = () => {
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   
-  const [event, setEvent] = useState<Event | null>(null);
+  const [event, setEvent] = useState<GDGEvent | null>(null);
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -110,8 +110,12 @@ const GenerateContent: React.FC = () => {
     
     setLoading(true);
     try {
-      const eventData = await EventsService.getEvent(eventId);
-      setEvent(eventData);
+      const eventData = await EventsService.getById(eventId);
+      if (eventData) {
+        setEvent(eventData);
+      } else {
+        setError('Event not found');
+      }
     } catch (err) {
       setError('Failed to load event');
       console.error('Error loading event:', err);
@@ -135,13 +139,13 @@ const GenerateContent: React.FC = () => {
         
 ${event.description}
 
-📅 ${new Date(event.startDate).toLocaleDateString()}
+📅 ${new Date(event.date).toLocaleDateString()}
 📍 ${event.location || 'Virtual Event'}
 
-This event is perfect for developers looking to enhance their ${event.eventType} skills. Don't miss out on this opportunity to learn and network with the GDG community!
+This event is perfect for developers looking to enhance their ${event.type} skills. Don't miss out on this opportunity to learn and network with the GDG community!
 
 Register now: [Event Link]`,
-        hashtags: ['#GDG', '#${event.eventType}', '#CommunityEvent', '#TechEvent', '#Learning'],
+        hashtags: ['#GDG', `#${event.type}`, '#CommunityEvent', '#TechEvent', '#Learning'],
         tone,
         length: 280,
         engagement_score: 0.85,
