@@ -43,9 +43,24 @@ This repository serves as a **public template** that any GDG chapter can use as 
 
 See our [Private Implementation Guide](./docs/setup/private-implementation/README.md) for detailed instructions on setting up your chapter's secure implementation.
 
-## Project Status
+## 🚀 Production Deployment
 
-This project is currently in active development. See the [Development Roadmap](./docs/roadmap.md) for more details.
+As of May 2025, the GDG Community Companion has been successfully deployed to production:
+
+- **Live URL**: https://gdg-community-companion.web.app
+- **Backend**: Firebase Functions (Node.js 20)
+- **Database**: Firestore with role-based security rules
+- **Authentication**: Firebase Auth with email/password
+- **Hosting**: Firebase Hosting
+- **Vector Store**: Pinecone for knowledge management
+- **Social Integration**: LinkedIn OAuth configured
+
+### Key Production Features
+- ✅ Real-time content generation for social media
+- ✅ Multi-platform support (LinkedIn, Bluesky ready)
+- ✅ Role-based access control (Admin/Member)
+- ✅ Responsive Material UI 3 interface
+- ✅ AI-powered content recommendations
 
 ## Quick Start
 
@@ -98,8 +113,62 @@ bash scripts/setup-environment.sh
 
 ## Getting Started
 
-Instructions for setup and contribution are available in the [Documentation](./docs/README.md).
+### Prerequisites
+- Node.js 18+ (production uses Node.js 20)
+- Firebase CLI installed globally
+- Firebase project on Blaze plan (for Cloud Functions)
+- Pinecone account for vector database
+- LinkedIn Developer App (for OAuth)
+
+### Quick Start
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/gdg-community-companion.git
+   cd gdg-community-companion
+   ```
+
+2. **Install dependencies**
+   ```bash
+   cd src/ui
+   npm install --legacy-peer-deps
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env.production
+   # Edit .env.production with your credentials
+   ```
+
+4. **Deploy to Firebase**
+   ```bash
+   firebase deploy
+   ```
+
+See [Setup Guide](./docs/setup/README.md) for detailed instructions.
+
+## Documentation
+
+- [Architecture Overview](./docs/architecture/README.md)
+- [Setup Guide](./docs/setup/README.md)
+- [Development Guide](./docs/development/README.md)
+- [API Documentation](./docs/api/README.md)
+- [ADR Documentation](./docs/architecture/adr/)
+
+## Contributing
+
+Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Google Developer Relations team
+- Google Agent Development Kit team
+- All GDG chapter organizers who provided feedback
+
+---
+
+Built with ❤️ by the GDG community, for the GDG community.

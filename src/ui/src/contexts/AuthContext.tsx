@@ -1,17 +1,11 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import { 
-  getAuth, 
-  signInWithEmailAndPassword, 
-  signOut as firebaseSignOut,
-  onAuthStateChanged,
-  User as FirebaseUser 
-} from 'firebase/auth';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { app } from '../services/firebase';
+import { User as FirebaseUser } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { useFirebase } from './FirebaseContext';
 
-// Initialize Firebase services
-const auth = getAuth(app);
-const firestore = getFirestore(app);
+// For development only - mock user
+// Set REACT_APP_MOCK_AUTH_ENABLED=false in .env when you have a real Firebase project configured
+const MOCK_USER_ENABLED = process.env.REACT_APP_MOCK_AUTH_ENABLED === 'true';
 
 // Types
 export interface ChapterMember {
@@ -44,6 +38,8 @@ const AuthContext = createContext<AuthContextType>({
 
 // Provider component
 export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
+  const firebase = useFirebase();
+  const { auth, db, signIn: firebaseSignIn, logout: firebaseLogout } = firebase;
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<ChapterMember | null>(null);
   const [loading, setLoading] = useState(true);
@@ -51,45 +47,91 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
 
   // Listen for auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      
-      if (user) {
-        try {
-          // Get the user's profile from Firestore
-          const userDoc = await getDoc(doc(firestore, 'members', user.uid));
-          
-          if (userDoc.exists()) {
-            setUserProfile({
-              id: user.uid,
-              email: user.email || '',
-              displayName: userDoc.data().displayName || user.displayName || '',
-              role: userDoc.data().role,
-              chapterId: userDoc.data().chapterId,
-              photoURL: user.photoURL || undefined,
-            });
-          } else {
-            setError('User profile not found');
-          }
-        } catch (err) {
-          console.error('Error fetching user profile:', err);
-          setError('Error fetching user profile');
-        }
-      } else {
-        setUserProfile(null);
-      }
-      
-      setLoading(false);
-    });
+    console.log('Auth state changed. MOCK_USER_ENABLED:', MOCK_USER_ENABLED);
+    
+    if (MOCK_USER_ENABLED) {
+      // Create a mock user for development
+      console.log('Using mock authentication');
+      const mockUser = {
+        uid: 'mock-user-id',
+        email: 'test@example.com',
+        displayName: 'Test User',
+      } as FirebaseUser;
 
-    return () => unsubscribe();
-  }, []);
+      const mockUserProfile = {
+        id: 'mock-user-id',
+        email: 'test@example.com',
+        displayName: 'Test User',
+        role: 'admin' as const,
+        chapterId: 'gdg-example', // Generic chapter ID for public repo
+      };
+
+      setUser(mockUser);
+      setUserProfile(mockUserProfile);
+      setLoading(false);
+      
+      return () => {};
+    } else {
+      // Normal Firebase auth flow
+      console.log('Using real Firebase authentication');
+      const unsubscribe = auth.onAuthStateChanged(async (user) => {
+        console.log('Firebase auth state changed:', user ? 'User authenticated' : 'No user');
+        setUser(user);
+        
+        if (user) {
+          try {
+            // First try to get user profile from 'users' collection
+            let userDoc = await getDoc(doc(db, 'users', user.uid));
+            
+            // If not found in 'users', try 'members' collection as fallback
+            if (!userDoc.exists()) {
+              console.log('User profile not found in "users" collection, trying "members" collection...');
+              userDoc = await getDoc(doc(db, 'members', user.uid));
+            }
+            
+            if (userDoc.exists()) {
+              setUserProfile({
+                id: user.uid,
+                email: user.email || '',
+                displayName: userDoc.data().displayName || user.displayName || '',
+                role: userDoc.data().role,
+                chapterId: userDoc.data().chapterId,
+                photoURL: user.photoURL || undefined,
+              });
+            } else {
+              console.error('User profile not found in either "users" or "members" collections');
+              setError('User profile not found');
+            }
+          } catch (err) {
+            console.error('Error fetching user profile:', err);
+            setError('Error fetching user profile');
+          }
+        } else {
+          setUserProfile(null);
+        }
+        
+        setLoading(false);
+      });
+
+      return () => unsubscribe();
+    }
+  }, [auth, db]);
 
   // Sign in method
   const signIn = async (email: string, password: string) => {
     try {
       setError(null);
-      await signInWithEmailAndPassword(auth, email, password);
+      
+      if (MOCK_USER_ENABLED) {
+        console.log('Using mock authentication');
+        // For demo: accept any credentials but simulate a delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // The mock user is automatically set in the useEffect
+        return;
+      }
+      
+      await firebaseSignIn(email, password);
     } catch (err: any) {
       console.error('Sign in error:', err);
       setError(err.message || 'An error occurred during sign in');
@@ -100,7 +142,14 @@ export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   // Sign out method
   const signOut = async () => {
     try {
-      await firebaseSignOut(auth);
+      if (MOCK_USER_ENABLED) {
+        // For mock mode, just clear the user state
+        setUser(null);
+        setUserProfile(null);
+        return;
+      }
+      
+      await firebaseLogout();
     } catch (err: any) {
       console.error('Sign out error:', err);
       setError(err.message || 'An error occurred during sign out');

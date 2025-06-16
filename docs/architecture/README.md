@@ -2,6 +2,15 @@
 
 This document provides an overview of the technical architecture for the GDG Community Companion.
 
+## Architecture Decision Records (ADRs)
+
+Key technical decisions are documented using Architecture Decision Records:
+
+- [ADR 1: Three-Layer Knowledge Architecture](./adr-001-three-layer-knowledge.md)
+- [ADR 2: Multi-Agent Architecture with ADK](./adr-002-multi-agent-architecture.md)
+- [ADR 3: Knowledge-Integrated Agent System](./adr-003-knowledge-integrated-agents.md)
+- [ADR 4: Mock Authentication and Development Environment](./adr-004-development-environment.md)
+
 ## System Architecture Overview
 
 ```mermaid

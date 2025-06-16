@@ -1,0 +1,20 @@
+# Additional gitignore for private repository
+# Add this content to your .gitignore in the private repo
+
+# Firebase config with real credentials
+src/ui/.env.local
+src/ui/.env.development
+src/ui/.env.production
+
+# API keys and secrets
+*.key
+*.pem
+*.cert
+credentials.json
+service-account.json
+
+# Local environment files
+.firebase/
+
+# Cache directories
+.firebase/hosting.*

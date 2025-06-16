@@ -1,0 +1,30 @@
+# This file specifies files that are *not* uploaded to Google Cloud Platform
+# using gcloud.
+
+.gcloudignore
+.git
+.gitignore
+
+# Python pycache:
+__pycache__/
+*.pyc
+
+# Virtual environment:
+venv/
+env/
+ENV/
+
+# IDE files:
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files:
+.DS_Store
+Thumbs.db
+
+# Firebase files:
+firebase-debug.log
+firestore-debug.log
+ui-debug.log

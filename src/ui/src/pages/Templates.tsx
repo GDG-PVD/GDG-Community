@@ -130,7 +130,7 @@ const Templates: React.FC = () => {
       case 'instagram':
         return <InstagramIcon fontSize="small" sx={{ color: '#E1306C' }} />;
       default:
-        return null;
+        return <></>; // Return empty React fragment instead of null
     }
   };
 

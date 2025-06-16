@@ -25,6 +25,12 @@ import {
   Person as PersonIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
+import { agentApi } from '../services/agentApi';
+
+interface AgentResponse {
+  text: string;
+  data?: any;
+}
 
 interface Message {
   id: string;
