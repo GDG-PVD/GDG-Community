@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "centient": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "/Users/stephenszermer/Dev/centient/dist/index.js"
+      ],
+      "env": {}
+    }
+  }
+}
