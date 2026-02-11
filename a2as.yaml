@@ -1,0 +1,362 @@
+manifest:
+  version: "0.1.3"
+  schema: https://a2as.org/cert/schema
+  subject:
+    name: gdg-pvd/gdg-community
+    source: https://github.com/gdg-pvd/gdg-community
+    branch: main
+    commit: "27ae6d40"
+    scope: [src/agents/content_agent.py, src/agents/core_agent.py, src/agents/knowledge_agent.py]
+  issued:
+    by: A2AS.org
+    at: '2026-02-11T16:50:56Z'
+    url: https://a2as.org/certified/agents/gdg-pvd/gdg-community
+  signatures:
+    digest: sha256:xjOzCDWkZmlH3QAr7q5xAT3vSwtq5TQv4qaYki996d8
+    key: ed25519:B4ZtOyDI0WsRarwNOWDquytxGBPNEXF97xXyMsYcgZc
+    sig: ed25519:6_sNWg42b5xLuHg-a_efWrA-cdOBHCdECru2lgt9aXAbYktY5u71cYv8tBrc1TRYpTTc7elw2bpiLfQrY19eAA
+
+agents:
+  agent.ContentAgent.agent:
+    type: class
+    models: [self.model_name]
+    tools: [Tool, Tool, Tool, Tool, Tool, Tool, Tool]
+    params:
+      name: content_specialist_{self.chapter_id}
+      description: Creates optimized social media content based on chapter guidelines and past performance
+      class: ContentAgent
+  agent.CoreAgent.agent:
+    type: class
+    models: [self.model_name]
+    tools: [Tool, Tool, Tool, Tool, Tool, Tool]
+    params:
+      name: gdg_{self.chapter_id}_assistant
+      description: Community assistant for {self.chapter_id} that manages knowledge and content generation
+      class: CoreAgent
+  agent.KnowledgeAgent.agent:
+    type: class
+    models: [self.model_name]
+    tools: [Tool, Tool, Tool, Tool, Tool]
+    params:
+      name: knowledge_specialist_{self.chapter_id}
+      description: Manages the three-layer knowledge architecture for the GDG chapter
+      class: KnowledgeAgent
+
+models:
+  self.model_name:
+    type: literal
+    agents: [agent.KnowledgeAgent.agent, agent.CoreAgent.agent, agent.ContentAgent.agent]
+
+imports:
+  Agent: google.adk.agents.Agent
+  aiplatform: google.cloud.aiplatform
+  Any: typing.Any
+  asyncio: asyncio
+  BlueskyService: src.integrations.bluesky.BlueskyService
+  ContentAgent: content_agent.ContentAgent
+  datetime: datetime.datetime
+  Dict: typing.Dict
+  EmbeddingService: knowledge.embedding_service.EmbeddingService
+  GenerativeModel: vertexai.generative_models.GenerativeModel
+  json: json
+  KnowledgeAgent: knowledge_agent.KnowledgeAgent
+  LinkedInService: src.integrations.linkedin.LinkedInService
+  List: typing.List
+  Optional: typing.Optional
+  os: os
+  Pinecone: pinecone.Pinecone
+  random: random
+  SocialMediaService: integrations.social_media_service.SocialMediaService
+  Tool: google.adk.tools.Tool
+  Tuple: typing.Tuple
+  Union: typing.Union
+  uuid: uuid
+  VectorStore: knowledge.vector_store.VectorStore
+
+functions:
+  __init__:
+    type: sync
+    module: src.agents.content_agent
+    args: [self, chapter_id, model_name, vector_store, embedding_service, social_media_service]
+  _categorize_knowledge:
+    type: async
+    module: src.agents.knowledge_agent
+    args: [self, content]
+    params:
+      returns: Dict
+  _determine_intent:
+    type: async
+    module: src.agents.core_agent
+    args: [self, query]
+    params:
+      returns: Dict
+  _extract_event_data:
+    type: async
+    module: src.agents.core_agent
+    args: [self, query]
+    params:
+      returns: Dict
+  _format_response_for_user:
+    type: sync
+    module: src.agents.core_agent
+    args: [self, data]
+    params:
+      returns: str
+  _generate_social_media_content:
+    type: async
+    module: src.agents.core_agent
+    args: [self, platform, event_data, template_id]
+    params:
+      returns: Dict
+  _generate_social_post:
+    type: async
+    module: src.agents.content_agent
+    args: [self, platform, event_data, template_id, use_past_performance]
+    params:
+      returns: Dict
+  _generate_summary:
+    type: async
+    module: src.agents.knowledge_agent
+    args: [self, query, layer, content_type]
+    params:
+      returns: Dict
+  _get_bluesky_metrics:
+    type: async
+    module: src.integrations.social_media_service
+    args: [self, post_uri]
+    params:
+      returns: Tuple
+  _get_brand_voice:
+    type: async
+    module: src.agents.content_agent
+    args: [self]
+    params:
+      returns: Dict
+  _get_chapter_info:
+    type: sync
+    module: src.agents.core_agent
+    args: [self]
+    params:
+      returns: Dict
+  _get_content_templates:
+    type: async
+    module: src.agents.content_agent
+    args: [self, template_type]
+    params:
+      returns: List[Dict]
+  _get_linkedin_metrics:
+    type: async
+    module: src.integrations.social_media_service
+    args: [self, post_id]
+    params:
+      returns: Tuple
+  _get_similar_content:
+    type: async
+    module: src.agents.content_agent
+    args: [self, platform, keywords]
+    params:
+      returns: List[Dict]
+  _get_social_media_metrics:
+    type: async
+    module: src.agents.content_agent
+    args: [self, post_ids]
+    params:
+      returns: Dict
+  _initialize_agent:
+    type: sync
+    module: src.agents.content_agent
+    args: [self]
+  _initialize_specialized_agents:
+    type: sync
+    module: src.agents.core_agent
+    args: [self]
+  _post_to_bluesky:
+    type: async
+    module: src.integrations.social_media_service
+    args: [self, text, images, link]
+    params:
+      returns: Tuple
+  _post_to_linkedin:
+    type: async
+    module: src.integrations.social_media_service
+    args: [self, text, images, link]
+    params:
+      returns: Tuple
+  _post_to_social_media:
+    type: async
+    module: src.agents.content_agent
+    args: [self, content, platforms, images, link, schedule_time]
+    params:
+      returns: Dict
+  _retrieve_knowledge:
+    type: async
+    module: src.agents.core_agent
+    args: [self, query, layer, content_type]
+    params:
+      returns: Dict
+  _route_to_specialized_agent:
+    type: async
+    module: src.agents.core_agent
+    args: [self, intent]
+    params:
+      returns: Dict
+  _save_generated_content:
+    type: async
+    module: src.agents.content_agent
+    args: [self, content, performance_data]
+    params:
+      returns: str
+  _store_knowledge:
+    type: async
+    module: src.agents.core_agent
+    args: [self, content, layer, content_type]
+    params:
+      returns: str
+  _update_knowledge:
+    type: async
+    module: src.agents.knowledge_agent
+    args: [self, item_id, layer, updated_content]
+    params:
+      returns: bool
+  fetch_platform_metrics:
+    type: async
+    module: src.agents.content_agent
+    args: [self, post_ids]
+    params:
+      returns: Dict
+  generate_content:
+    type: async
+    module: src.agents.content_agent
+    args: [self, platforms, event_data, template_id, post_immediately, images, schedule_time]
+    params:
+      returns: Dict
+  generate_content_embeddings:
+    type: async
+    module: src.knowledge.embedding_service
+    args: [self, content]
+    params:
+      returns: List[float]
+  generate_embeddings:
+    type: async
+    module: src.knowledge.embedding_service
+    args: [self, text]
+    params:
+      returns: Union
+  get_knowledge_summary:
+    type: async
+    module: src.agents.knowledge_agent
+    args: [self, topic]
+    params:
+      returns: Dict
+  get_metrics:
+    type: async
+    module: src.integrations.social_media_service
+    args: [self, post_ids]
+    params:
+      returns: Dict
+  get_namespace:
+    type: sync
+    module: src.knowledge.vector_store
+    args: [self, chapter_id, layer]
+    params:
+      returns: str
+  get_post_metrics:
+    type: async
+    module: src.integrations.bluesky
+    args: [self, post_uri]
+    params:
+      returns: Dict
+  initialize:
+    type: sync
+    module: src.integrations.bluesky
+    args: [self]
+  post_content:
+    type: async
+    module: src.integrations.bluesky
+    args: [self, text, images, link, language]
+    params:
+      returns: Dict
+  process:
+    type: async
+    module: src.agents.core_agent
+    args: [self, query]
+    params:
+      returns: Dict
+  query:
+    type: async
+    module: src.knowledge.vector_store
+    args: [self, chapter_id, layer, query_embedding, filter, top_k]
+    params:
+      returns: List[Dict]
+  record_content_performance:
+    type: async
+    module: src.agents.content_agent
+    args: [self, content_id, performance_metrics]
+    params:
+      returns: None
+  store_brand_guidelines:
+    type: async
+    module: src.agents.knowledge_agent
+    args: [self, guidelines]
+    params:
+      returns: str
+  store_item:
+    type: async
+    module: src.knowledge.vector_store
+    args: [self, chapter_id, layer, item_id, embedding, metadata]
+  store_performance_data:
+    type: async
+    module: src.agents.knowledge_agent
+    args: [self, performance_data]
+    params:
+      returns: str
+  store_template:
+    type: async
+    module: src.agents.knowledge_agent
+    args: [self, template]
+    params:
+      returns: str
+  store_workflow:
+    type: async
+    module: src.agents.knowledge_agent
+    args: [self, workflow]
+    params:
+      returns: str
+  upload_image:
+    type: async
+    module: src.integrations.bluesky
+    args: [self, image_path, alt_text]
+    params:
+      returns: Dict
+
+variables:
+  BLUESKY_APP_PASSWORD:
+    type: env
+    params:
+      caller: [os.environ.get]
+      path: [src.integrations.bluesky]
+  BLUESKY_IDENTIFIER:
+    type: env
+    params:
+      caller: [os.environ.get]
+      path: [src.integrations.bluesky]
+  LINKEDIN_ACCESS_TOKEN:
+    type: env
+    params:
+      caller: [os.environ.get]
+      path: [src.integrations.linkedin]
+  LINKEDIN_ORGANIZATION_ID:
+    type: env
+    params:
+      caller: [os.environ.get]
+      path: [src.integrations.linkedin]
+  PINECONE_API_KEY:
+    type: env
+    params:
+      caller: [os.environ.get]
+      path: [src.knowledge.vector_store]
+  PINECONE_INDEX_NAME:
+    type: env
+    params:
+      caller: [os.environ.get]
+      path: [src.knowledge.vector_store]
